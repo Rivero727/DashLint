@@ -1,7 +1,6 @@
 import Link from 'next/link';
-//import NavLinks from '@/app/ui/dashboard/nav-links';
+import NavLinks from '@/components/_nav-links/nav-links';
 //import AcmeLogo from '@/app/ui/acme-logo';
-//import { PowerIcon } from '@heroicons/react/24/outline';
 import Styles from "@/components/ui/sidenav.module.css";
 
 export default function SideNav() {
@@ -13,11 +12,11 @@ export default function SideNav() {
       >
         <div className={Styles.logoContainer}>
           <img src="/next.svg" alt="Logo" />
-          <span className={Styles.logoText}>CRM Lite</span>
+          <span className={Styles.logoText}>DashLint</span>
         </div>
       </Link>
       <div className={Styles.navContent}>
-
+          <NavLinks />
         <div className={Styles.spacer}></div>
         <form>
           <button className={Styles.signOutButton}>

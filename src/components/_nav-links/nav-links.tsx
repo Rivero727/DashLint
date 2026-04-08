@@ -1,14 +1,15 @@
-/*"use client";
+"use client";
 
 import {
   UserGroupIcon,
   HomeIcon,
   DocumentDuplicateIcon,
-} from git;
+} from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
-import styles from "./nav-links.module.css"; // Importamos los estilos
+import styles from "@/components/ui/nav-links.module.css";
+
 
 const links = [
   { name: "Home", href: "/dashboard", icon: HomeIcon },
@@ -42,4 +43,4 @@ export default function NavLinks() {
       })}
     </>
   );
-}*/
+}

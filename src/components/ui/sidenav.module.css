@@ -1,0 +1,105 @@
+.container {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  padding: 16px 12px;
+}
+
+.logoLink {
+  margin-bottom: 8px;
+  display: flex;
+  height: 80px;
+  align-items: flex-end;
+  justify-content: flex-start;
+  border-radius: 7px;
+  background-color: #000f9f;
+  padding: 16px;
+  margin-top: -12px;
+}
+
+.logoContainer {
+  width: 128px;
+  color: white;
+}
+
+.navContent {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.spacer {
+  display: none;
+  height: auto;
+  width: 100%;
+  flex-grow: 1;
+  border-radius: 7px;
+  background-color: #f9fafb;
+}
+
+.signOutButton {
+  display: flex;
+  height: 48px;
+  width: 100%;
+  flex-grow: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 7px;
+  background-color: #f9fafb;
+  padding: 12px;
+  font-size: 15px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.signOutButton:hover {
+  background-color: #e0f2fe;
+  color: #2563eb;
+}
+
+.buttonText {
+  display: none;
+  color: #000000;
+}
+
+/* Media Query para pantallas medianas (md: 768px) */
+@media (min-width: 768px) {
+  .container {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .logoLink {
+    height: 160px;
+  }
+
+  .logoContainer {
+    width: 160px;
+    
+  }
+
+  .navContent {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .spacer {
+    display: block;
+  }
+
+  .signOutButton {
+    flex: none;
+    justify-content: flex-start;
+    padding: 8px 12px;
+  }
+
+  .buttonText {
+    display: block;
+    color: #000000;
+  }
+}

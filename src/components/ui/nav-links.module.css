@@ -1,0 +1,50 @@
+/* nav-links.module.css */
+
+.link {
+  display: flex;
+  height: 48px;
+  flex-grow: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 8px; /* gap-2 */
+  border-radius: 6px; /* rounded-md */
+  background-color: #f9fafb; /* bg-gray-50 */
+  padding: 12px; /* p-3 */
+  font-size: 14px; /* text-sm */
+  font-weight: 500; /* font-medium */
+  color: #374151; /* Color de texto base */
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.link:hover {
+  background-color: #e0f2fe; /* bg-sky-100 */
+  color: #2563eb; /* text-blue-600 */
+}
+
+/* Clase para el estado activo */
+.active {
+  background-color: #e0f2fe;
+  color: #2563eb;
+}
+
+.icon {
+  width: 24px; /* w-6 */
+}
+
+.linkText {
+  display: none; /* hidden */
+}
+
+/* Media Query para md: (768px) */
+@media (min-width: 768px) {
+  .link {
+    flex: none; /* md:flex-none */
+    justify-content: flex-start; /* md:justify-start */
+    padding: 8px 12px; /* md:p-2 md:px-3 */
+  }
+
+  .linkText {
+    display: block; /* md:block */
+  }
+}

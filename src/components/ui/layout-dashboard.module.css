@@ -1,0 +1,22 @@
+.container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.sidebar {
+  width: 260px;
+  background-color: #ffffff;
+  border-right: 1px solid #e0e0e0;
+  position: fixed;
+  height: 100vh;
+  z-index: 110; 
+}
+
+.content {
+  flex: 1;
+  margin-left: 260px;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}

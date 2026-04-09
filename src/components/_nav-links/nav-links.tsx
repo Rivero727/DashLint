@@ -4,21 +4,27 @@ import {
   UserGroupIcon,
   HomeIcon,
   DocumentDuplicateIcon,
+  TableCellsIcon,
+  ClipboardDocumentCheckIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
 import styles from "@/components/ui/nav-links.module.css";
 
-
 const links = [
   { name: "Home", href: "/dashboard", icon: HomeIcon },
   {
-    name: "Invoices",
-    href: "/dashboard/invoices",
-    icon: DocumentDuplicateIcon,
+    name: "Repositorios",
+    href: "/dashboard/repositories",
+    icon: TableCellsIcon,
   },
-  { name: "Customers", href: "/dashboard/customers", icon: UserGroupIcon },
+  {
+    name: "Crear Repositorio",
+    href: "/dashboard/forms",
+    icon: ClipboardDocumentCheckIcon,
+  },
+  { name: "Usuarios", href: "/dashboard/users", icon: UserGroupIcon },
 ];
 
 export default function NavLinks() {

@@ -67,6 +67,18 @@
   color: #000000;
 }
 
+.icon {
+  width: 24px;
+  height: 24px;
+  color: #3b82f6; /* Azul */
+  transition: transform 0.2s;
+}
+
+.icon:hover {
+  transform: scale(1.2);
+  color: #1d4ed8;
+}
+
 /* Media Query para pantallas medianas (md: 768px) */
 @media (min-width: 768px) {
   .container {

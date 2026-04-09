@@ -1,4 +1,4 @@
-import Sidenav from "@/components/_sidevardashboard/sidenav"; // Asumiendo que creas este componente
+import Sidenav from "@/components/_sidevar-dashboard/sidenav"; 
 import styles from "@/components/ui/layout-dashboard.module.css";
 
 export default function Layout({
@@ -8,12 +8,11 @@ export default function Layout({
 }) {
   return (
     <div className={styles.container}>
-      {/* El Sidenav se queda fijo a la izquierda */}
+
       <aside className={styles.sidebar}>
         <Sidenav />
       </aside>
 
-      {/* El contenido principal se desplaza a la derecha */}
       <div className={styles.content}>
         {children}
       </div>

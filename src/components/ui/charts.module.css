@@ -1,0 +1,37 @@
+.chartContainer {
+  background-color: #ffffff;
+  border: 1px solid #b9bcc1;
+  border-radius: 12px; 
+  padding: 24px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  /* Eliminamos el margin-top: 20px fijo porque el 'gap' del grid ya maneja el espacio */
+  width: 100%; 
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #111827;
+}
+
+/* Estilo alternativo para las graficas */
+
+.chartCard {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px; 
+  padding: 24px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.chartTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #111827;
+}

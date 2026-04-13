@@ -25,13 +25,13 @@
 }
 
 .link:hover {
-  background-color: #e0f2fe; /* bg-sky-100 */
-  color: #2563eb; /* text-blue-600 */
+  background-color: #e0f2fe;
+  color: #38d430;
 }
 
 .active {
   background-color: #e0f2fe;
-  color: #2563eb;
+  color: #38d430;
 }
 
 .icon {

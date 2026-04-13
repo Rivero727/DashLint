@@ -1,0 +1,30 @@
+.btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  white-space: nowrap;
+}
+
+.primary {
+  background-color: #38d430; /* Tu color verde */
+  color: white;
+}
+
+.primary:hover {
+  background-color: #2eb827;
+  transform: translateY(-1px);
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  width: 18px;
+  height: 18px;
+}

@@ -1,8 +1,8 @@
 import styles from "@/components/ui/dashboard.module.css";
 import SummaryChart from "@/components/_summary-chart/summary-chart";
 import VendorRepos from "@/components/_vendor-repos/vendor-repos";
-import SearchBar from "@/components/searchbar/searchbar";
-import DashboardHeader from "@/components/action-button/action-button";
+import SearchBar from "@/components/_searchbar/searchbar";
+import DashboardHeader from "@/components/_action-button/action-button";
 
 export default function Page() {
   return (
@@ -13,7 +13,8 @@ export default function Page() {
           <div>
             <h1 className={styles.pageTitle}>Dashboard</h1>
             <p className={styles.subtitle}>
-              Visualiza el rendimiento y actividad de tus repositorios.
+              Visualiza el rendimiento de tu equipo y actividad en los
+              repositorios.
             </p>
           </div>
           <div className={styles.actions}>

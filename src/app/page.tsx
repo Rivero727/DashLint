@@ -19,7 +19,6 @@ export default function Home() {
           priority
           className="rounded-lg shadow-lg"
         />
-
         {/* Botón para ir al login */}
         <Link
           href="/login"

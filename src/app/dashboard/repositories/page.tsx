@@ -1,6 +1,4 @@
 import styles from "@/components/ui/dashboard.module.css";
-import SummaryChart from "@/components/_summary-chart/summary-chart";
-import VendorRepos from "@/components/_vendor-repos/vendor-repos";
 import SearchBar from "@/components/_searchbar/searchbar";
 import RepoTable from "@/components/_repo-table/repotables";
 

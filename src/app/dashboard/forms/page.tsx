@@ -1,7 +1,6 @@
-import styles from "@/components/ui/dashboard.module.css";
-import SummaryChart from "@/components/_summary-chart/summary-chart";
-import VendorRepos from "@/components/_vendor-repos/vendor-repos";
+import RepoForm from "@/components/_repo-form/repo-form";
 import SearchBar from "@/components/_searchbar/searchbar";
+import styles from "@/components/ui/dashboard.module.css";
 
 export default function Page() {
   return (
@@ -10,21 +9,13 @@ export default function Page() {
       <main className={styles.main}>
         <div className={styles.titleContainer}>
           <div>
-            <h1 className={styles.pageTitle}>Dashboard</h1>
+            <h1 className={styles.pageTitle}>Crear nuevo repositorio</h1>
             <p className={styles.subtitle}>
-              Visualiza el rendimiento y actividad de tus repositorios.
+              Puedes crear un nuevo repositorio aquí.
             </p>
           </div>
-
-          <SearchBar placeholder="Buscar en el dashboard..." />
         </div>
-
-        <div className={styles.spacer}>
-          <div className={styles.gridContainer}>
-            <VendorRepos />
-            <SummaryChart />
-          </div>
-        </div>
+        <RepoForm />
       </main>
     </div>
   );

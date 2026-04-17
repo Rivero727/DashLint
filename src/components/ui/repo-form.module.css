@@ -57,6 +57,7 @@
   font-size: 14px;
   transition: all 0.2s ease;
   outline: none;
+  color: #111827;
 }
 
 .input:focus, .textarea:focus {

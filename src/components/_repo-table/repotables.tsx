@@ -22,8 +22,7 @@ export default function RepoTable() {
       <table className={styles.table}>
         <thead>
           <tr>
-            {/* Aplicamos idHeader para centrar y diferenciar el título del ID */}
-            <th className={styles.idHeader}>ID</th>
+            <th className={styles.idCell}>ID</th>
             <th>Vendedor</th>
             <th>Repositorio</th>
             <th>Fecha de Creación</th>

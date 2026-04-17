@@ -6,7 +6,6 @@ import styles from "@/components/ui/home.module.css";
 export default function Home() {
   return (
     <div className="flex min-h-screen flex-col items-center">
-      {/* Header de color */}
       <header className={styles.header}></header>
       {/* Contenido principal */}
       <main className="flex flex-1 flex-col items-center justify-center p-8 gap-6">

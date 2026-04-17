@@ -1,5 +1,4 @@
 import RepoForm from "@/components/_repo-form/repo-form";
-import SearchBar from "@/components/_searchbar/searchbar";
 import styles from "@/components/ui/dashboard.module.css";
 
 export default function Page() {

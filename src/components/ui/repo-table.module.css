@@ -27,6 +27,7 @@
   padding: 14px 16px;
   border-right: 1px solid #d1d5db;
   font-size: 14px;
+  color: #111827;
 }
 
 .table th:last-child,
@@ -47,7 +48,6 @@
   width: 80px;
   font-family: monospace;
   font-weight: 700;
-  color: #111827;
 }
 
 .table tbody tr {
@@ -60,13 +60,10 @@
 }
 
 .vendorCell {
-  font-weight: 500;
   color: #111827;
 }
 
 .nameCell {
-  color: #111827;
-  font-weight: 700;
   cursor: pointer;
   padding: 4px 8px;
   border-radius: 4px;
@@ -74,7 +71,6 @@
 }
 
 .nameCell:hover {
-  background-color: #e0f2fe;
   color: #38d430;
 }
 

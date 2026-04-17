@@ -1,7 +1,6 @@
 import styles from "@/components/ui/dashboard.module.css";
-import SummaryChart from "@/components/_summary-chart/summary-chart";
-import VendorRepos from "@/components/_vendor-repos/vendor-repos";
 import SearchBar from "@/components/_searchbar/searchbar";
+import UsersTable from "@/components/_userstable/userstable";
 
 export default function Page() {
   return (
@@ -15,14 +14,12 @@ export default function Page() {
               Consulta los usuarios registrados en el sistema.
             </p>
           </div>
-
           <SearchBar placeholder="Buscar en usuarios..." />
         </div>
 
         <div className={styles.spacer}>
-          <div className={styles.gridContainer}>
-            <VendorRepos />
-            <SummaryChart />
+          <div className={styles.fullWidth}>
+            <UsersTable />
           </div>
         </div>
       </main>

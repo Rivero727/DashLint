@@ -1,0 +1,201 @@
+.tableWrapper {
+  width: 100%;
+  background-color: #ffffff;
+  border-radius: 12px;
+  border: 2px solid #d1d5db;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center; 
+}
+
+.table thead {
+  background-color: #38d430;
+  border-bottom: 2px solid #2eb827;
+}
+
+.table th,
+.table td {
+  padding: 14px 16px;
+  border-right: 1.5px solid #d1d5db;
+  font-size: 14px;
+  color: #111827
+}
+
+.table th:last-child,
+.table td:last-child {
+  border-right: none;
+}
+
+.table th {
+  font-weight: 700;
+  color: #ffffff;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+}
+
+.table tbody tr {
+  border-bottom: 1.5px solid #d1d5db; 
+  transition: background-color 0.2s ease;
+}
+
+.table tbody tr:hover {
+  background-color: #f0fdf4;
+}
+
+/* --- CLASES ESPECÍFICAS DE USUARIOS --- */
+
+.idCell {
+  width: 80px;
+  font-family: monospace;
+  font-weight: 700;
+}
+
+.emailCell {
+  color: #6b7280;
+  font-family: ui-sans-serif, system-ui;
+}
+
+.userName {
+  display: block;
+}
+
+.userEmail {
+  display: block;
+  font-size: 12px;
+  color: #6b7280;
+
+}
+
+.statusBadge {
+  padding: 4px 12px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-block;
+}
+
+.active { background-color: #dcfce7; color: #166534; }
+.inactive { background-color: #f3f4f6; color: #4b5563; }
+
+.actionsCell {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  border-right: none !important;
+}
+
+.actionBtn {
+  padding: 6px;
+  border-radius: 6px;
+  border: 1.5px solid #d1d5db;
+  background: white;
+  cursor: pointer;
+  color: #4b5563;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+}
+
+.actionBtn:hover {
+  border-color: #38d430;
+  color: #38d430;
+  background: #f0fdf4;
+}
+
+.deleteBtn:hover {
+  border-color: #ef4444;
+  color: #ef4444;
+  background: #fee2e2;
+}
+
+/* --- ESTILOS DEL MODAL --- */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  border: 2px solid #d1d5db;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+}
+
+.modalIcon {
+  color: #ef4444;
+  width: 48px;
+  margin: 0 auto 16px;
+}
+
+.modalTitle { font-size: 18px; font-weight: 700; color: #111827; margin-bottom: 8px; }
+.modalText { font-size: 14px; color: #6b7280; margin-bottom: 24px; }
+
+.modalActions { display: flex; gap: 12px; }
+
+.btnCancel, .btnConfirm {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+}
+
+.btnCancel { background: #f3f4f6; color: #374151; }
+.btnConfirm { background: #ef4444; color: white; }
+
+.roleSelect {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1.5px solid #d1d5db;
+  background-color: #f9fafb;
+  color: #111827;
+  font-weight: 500;
+  margin-bottom: 24px;
+  outline: none;
+  cursor: pointer;
+}
+
+.roleSelect:focus {
+  border-color: #38d430;
+  box-shadow: 0 0 0 3px rgba(56, 212, 48, 0.1);
+}
+
+/* Icono y botón específico para el modal de roles */
+.modalIconRole {
+  color: #38d430;
+  width: 48px;
+  margin: 0 auto 16px;
+}
+
+.btnConfirmRole {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  background-color: #38d430;
+  color: white;
+}
+
+.btnConfirmRole:hover {
+  background-color: #2eb827;
+}

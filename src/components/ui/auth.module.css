@@ -1,0 +1,343 @@
+/* --- LAYOUT PRINCIPAL --- */
+.pageWrapper {
+  display: grid;
+  min-height: 100vh;
+  max-height: 100vh; 
+  overflow: hidden;
+  grid-template-columns: 1fr;
+  grid-template-areas: "form";
+  background-color: #ffffff;
+}
+
+@media (min-width: 1024px) {
+  .pageWrapper {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (min-width: 1024px) {
+  .pageWrapper {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: "form image";
+    /* Si el navegador soporta View Transitions, esto hará magia */
+    transition: grid-template-areas 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* CLAVE: Esta clase invierte el orden visualmente */
+  .reverseLayout {
+    grid-template-areas: "image form";
+  }
+}
+
+/* --- ASIGNACIÓN DE ÁREAS --- */
+.formSection {
+  grid-area: form; 
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  gap: 16px;
+  animation: slideIn 0.5s ease-out;
+  overflow-y: auto;
+}
+
+.imageSection {
+  grid-area: image;
+  display: none;
+  position: relative;
+  background-color: #f3f4f6;
+  animation: fadeIn 0.8s ease-in;
+  overflow: hidden;
+  height: 100%;
+}
+
+@media (min-width: 1024px) {
+  .imageSection { 
+    display: block; 
+  }
+
+  
+  .pageWrapper:not(.reverseLayout) .imageSection {
+    border-left: 2px solid #e5e7eb;
+  }
+
+  
+  .reverseLayout .imageSection {
+    border-right: 2px solid #e5e7eb;
+  }
+}
+
+/* --- ANIMACIONES --- */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* --- SECCIÓN DEL FORMULARIO --- */
+.formSection {
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  gap: 16px;
+  animation: slideIn 0.5s ease-out;
+}
+
+@media (min-width: 768px) {
+  .formSection {
+    padding: 40px;
+    view-transition-name: auth-form;
+  }
+}
+
+.headerTop {
+  display: flex;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .headerTop {
+    justify-content: flex-start;
+  }
+}
+
+.logoContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: #111827;
+  text-decoration: none;
+}
+
+.logoIcon {
+  display: flex;
+  width: 26px;
+  height: 26px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background-color: #38d430;
+  color: white;
+  border: 2px solid #2eb827;
+}
+
+.formContainer {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+}
+
+.formInner {
+  width: 100%;
+  max-width: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: fadeInScale 0.4s ease-out;
+}
+
+/* --- CABECERA DEL FORMULARIO --- */
+.formHeader {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #111827;
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #4b5563;
+  margin: 0;
+}
+
+/* --- ELEMENTOS DEL FORMULARIO --- */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Nueva clase para las notas debajo de los inputs */
+.fieldDescription {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: -4px;
+}
+
+.labelRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.forgotLink {
+  font-size: 14px;
+  color: #6b7280;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.forgotLink:hover {
+  color: #38d430;
+}
+
+.input {
+  height: 40px;
+  width: 100%;
+  border-radius: 8px;
+  border: 2px solid #9ca3af;
+  padding: 8px 12px;
+  font-size: 14px;
+  color: #111827;
+  outline: none;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.input:focus {
+  border-color: #38d430;
+  box-shadow: 0 0 0 3px rgba(56, 212, 48, 0.2);
+}
+
+/* --- BOTONES --- */
+.btnPrimary {
+  height: 40px;
+  border-radius: 8px;
+  background-color: #38d430;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  border: 2px solid #2eb827;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btnPrimary:hover {
+  background-color: #2eb827;
+}
+
+.btnOutline {
+  height: 40px;
+  border-radius: 8px;
+  background-color: white;
+  color: #374151;
+  font-weight: 500;
+  font-size: 14px;
+  border: 2px solid #9ca3af;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.btnOutline:hover {
+  background-color: #f3f4f6;
+  border-color: #6b7280;
+  color: #111827;
+}
+
+/* --- SEPARADOR --- */
+.separator {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.separatorLine {
+  flex: 1;
+  height: 2px;
+  background-color: #d1d5db;
+}
+
+.separatorText {
+  font-size: 12px;
+  color: #6b7280;
+  text-transform: uppercase;
+}
+
+/* --- LINKS INFERIORES (FOOTER) --- */
+.footerText {
+  text-align: center;
+  font-size: 14px;
+  color: #6b7280;
+  margin-top: 8px;
+}
+
+.footerLink {
+  color: #111827;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.footerLink:hover {
+  color: #38d430;
+}
+
+/* --- SECCIÓN DE LA IMAGEN --- */
+
+
+@media (min-width: 1024px) {
+  .imageSection {
+    display: block;
+    transition: border 0.3s ease;
+    view-transition-name: auth-image;
+  }
+}
+
+.coverImage {
+  position: absolute;
+  top: -1px;
+  bottom: -1px;
+  left: -1px;
+  right: -1px;
+  width: calc(100% + 2px); 
+  height: calc(100% + 2px);
+  object-fit: cover;
+  filter: brightness(0.85);
+  transition: opacity 0.5s ease;
+}

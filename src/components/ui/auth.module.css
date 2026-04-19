@@ -228,7 +228,7 @@
   width: 100%;
   border-radius: 8px;
   border: 2px solid #9ca3af;
-  padding: 8px 12px;
+  padding: 8px 40px 8px 12px;
   font-size: 14px;
   color: #111827;
   outline: none;
@@ -340,4 +340,46 @@
   object-fit: cover;
   filter: brightness(0.85);
   transition: opacity 0.5s ease;
+}
+
+
+.passwordWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.showPasswordBtn {
+  position: absolute;
+  right: 10px;
+  top: 0;
+  height: 100%;
+  width: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 0;
+}
+
+.showPasswordBtn:hover {
+  color: #38d430;
+}
+
+.showPasswordIcon {
+  width: 20px;
+  height: 20px;
+  display: block;
+  transform: translateY(-1px);
+}
+
+.success {
+  font-size: 14px;
+  color: #16a34a;
+  margin-top: -8px;
 }

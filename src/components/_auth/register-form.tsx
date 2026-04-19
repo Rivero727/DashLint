@@ -1,8 +1,67 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { signUp } from "@/lib/auth-client";
 import styles from "@/components/ui/auth.module.css";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
+
 export default function RegisterForm() {
+  const router = useRouter();
+
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    if (isSubmitting) return;
+
+    setError(null);
+    setSuccess(null);
+    setIsSubmitting(true);
+
+    const formData = new FormData(e.currentTarget);
+
+    const name = String(formData.get("name") ?? "").trim();
+    const email = String(formData.get("email") ?? "").trim();
+    const password = String(formData.get("password") ?? "");
+
+    if (!name || !email || !password) {
+      setError("Todos los campos son obligatorios.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (password.length < 8) {
+      setError("La contraseña debe tener al menos 8 caracteres.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    const res = await signUp.email({
+      name,
+      email,
+      password,
+    });
+
+    if (res.error) {
+      console.error("Error en registro:", res.error);
+      setError(res.error.message || "Algo salió mal.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    setSuccess("¡Cuenta creada con éxito! Redirigiendo al inicio de sesión...");
+
+    setTimeout(() => {
+      router.push("/login");
+    }, 2000);
+  }
+
   return (
     <div className={styles.formContainer}>
       <div className={styles.formInner}>
@@ -11,16 +70,18 @@ export default function RegisterForm() {
           <p className={styles.subtitle}>Completa los datos para empezar</p>
         </div>
 
-        <form className={styles.form}>
+        <form className={styles.form} onSubmit={handleSubmit}>
           <div className={styles.field}>
             <label htmlFor="name" className={styles.label}>
               Nombre Completo
             </label>
             <input
               id="name"
+              name="name"
               type="text"
               placeholder="John Doe"
               required
+              autoComplete="name"
               className={styles.input}
             />
           </div>
@@ -31,9 +92,11 @@ export default function RegisterForm() {
             </label>
             <input
               id="email"
+              name="email"
               type="email"
               placeholder="m@example.com"
               required
+              autoComplete="email"
               className={styles.input}
             />
             <p className={styles.fieldDescription}>
@@ -45,17 +108,49 @@ export default function RegisterForm() {
             <label htmlFor="password" className={styles.label}>
               Contraseña
             </label>
-            <input
-              id="password"
-              type="password"
-              required
-              className={styles.input}
-            />
+
+            <div className={styles.passwordWrapper}>
+              <input
+                id="password"
+                name="password"
+                type={passwordVisible ? "text" : "password"}
+                required
+                minLength={8}
+                autoComplete="new-password"
+                className={styles.input}
+              />
+
+              <button
+                type="button"
+                className={styles.showPasswordBtn}
+                onClick={() => setPasswordVisible((prev) => !prev)}
+                aria-label={
+                  passwordVisible ? "Ocultar contraseña" : "Mostrar contraseña"
+                }
+                title={
+                  passwordVisible ? "Ocultar contraseña" : "Mostrar contraseña"
+                }
+              >
+                {passwordVisible ? (
+                  <EyeSlashIcon className={styles.showPasswordIcon} />
+                ) : (
+                  <EyeIcon className={styles.showPasswordIcon} />
+                )}
+              </button>
+            </div>
+
             <p className={styles.fieldDescription}>Mínimo 8 caracteres.</p>
           </div>
 
-          <button type="submit" className={styles.btnPrimary}>
-            Crear Cuenta
+          {error && <p className={styles.error}>{error}</p>}
+          {success && <p className={styles.success}>{success}</p>}
+
+          <button
+            type="submit"
+            className={styles.btnPrimary}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Creando cuenta..." : "Crear Cuenta"}
           </button>
 
           <div className={styles.separator}>
@@ -64,7 +159,11 @@ export default function RegisterForm() {
             <div className={styles.separatorLine}></div>
           </div>
 
-          <button type="button" className={styles.btnOutline}>
+          <button
+            type="button"
+            className={styles.btnOutline}
+            disabled={isSubmitting}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 48 48"

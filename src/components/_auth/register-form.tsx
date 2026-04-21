@@ -1,5 +1,6 @@
 "use client";
 
+import { assignDefaultRoleToUserByEmail } from "@/app/dashboard/users/actions";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { signUp } from "@/lib/auth-client";
@@ -12,13 +13,11 @@ import {
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 
-type ModalState =
-  | {
-      type: "error" | "success";
-      title: string;
-      message: string;
-    }
-  | null;
+type ModalState = {
+  type: "error" | "success";
+  title: string;
+  message: string;
+} | null;
 
 type AuthClientErrorLike = {
   code?: string;
@@ -254,6 +253,20 @@ export default function RegisterForm() {
       });
 
       showErrorModal(friendly.message, friendly.title);
+      setIsSubmitting(false);
+      return;
+    }
+
+    try {
+      await assignDefaultRoleToUserByEmail(email);
+    } catch (error) {
+      console.error("No se pudo asignar el rol por defecto:", error);
+
+      showErrorModal(
+        "La cuenta se creó, pero no fue posible asignarle un rol inicial. Revisa la configuración de roles e inténtalo nuevamente.",
+        "Rol no asignado",
+      );
+
       setIsSubmitting(false);
       return;
     }

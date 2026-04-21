@@ -12,6 +12,15 @@ datasource db {
   provider = "postgresql"
 }
 
+model Role {
+  roleId   Int    @id @default(autoincrement()) @map("role_id")
+  roleName String @unique @db.VarChar(50) @map("role_name")
+
+  users    User[]
+
+  @@map("roles")
+}
+
 model User {
   id            String    @id
   name          String
@@ -23,7 +32,11 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
+  roleId        Int?      @map("role_id")
+  role          Role?     @relation(fields: [roleId], references: [roleId], onDelete: SetNull)
+
   @@unique([email])
+  @@index([roleId])
   @@map("user")
 }
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import styles from "@/components/ui/users-view.module.css";
 import {
   PencilSquareIcon,
@@ -36,6 +36,10 @@ export default function UsersTable({ initialUsers, roles }: Props) {
   const [selectedUser, setSelectedUser] = useState<UserRow | null>(null);
   const [selectedRoleId, setSelectedRoleId] = useState<number | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    setUsers(initialUsers);
+  }, [initialUsers]);
 
   const sortedRoles = useMemo(() => roles, [roles]);
 
@@ -115,7 +119,7 @@ export default function UsersTable({ initialUsers, roles }: Props) {
           <tbody>
             {users.length === 0 ? (
               <tr>
-                <td colSpan={6}>No hay usuarios registrados.</td>
+                <td colSpan={6}>No se encontraron usuarios para esta búsqueda.</td>
               </tr>
             ) : (
               users.map((user, index) => (
@@ -163,7 +167,6 @@ export default function UsersTable({ initialUsers, roles }: Props) {
         </table>
       </div>
 
-      {/* MODAL CAMBIAR ROL */}
       {showRoleModal && selectedUser && (
         <div className={styles.modalOverlay}>
           <div className={styles.modal}>
@@ -211,7 +214,6 @@ export default function UsersTable({ initialUsers, roles }: Props) {
         </div>
       )}
 
-      {/* MODAL ELIMINAR */}
       {showDeleteModal && selectedUser && (
         <div className={styles.modalOverlay}>
           <div className={styles.modal}>

@@ -1,6 +1,5 @@
 import styles from "@/components/ui/dashboard.module.css";
-import SearchBar from "@/components/_searchbar/searchbar";
-import UsersTable from "@/components/_userstable/userstable";
+import UsersContent from "@/components/_userstable/users-content";
 import { getUsersAndRoles } from "./data";
 
 export default async function Page() {
@@ -11,22 +10,7 @@ export default async function Page() {
       <header className={styles.header}></header>
 
       <main className={styles.main}>
-        <div className={styles.titleContainer}>
-          <div>
-            <h1 className={styles.pageTitle}>Usuarios</h1>
-            <p className={styles.subtitle}>
-              Consulta los usuarios registrados en el sistema.
-            </p>
-          </div>
-
-          <SearchBar placeholder="Buscar en usuarios..." />
-        </div>
-
-        <div className={styles.spacer}>
-          <div className={styles.fullWidth}>
-            <UsersTable initialUsers={users} roles={roles} />
-          </div>
-        </div>
+        <UsersContent initialUsers={users} roles={roles} />
       </main>
     </div>
   );

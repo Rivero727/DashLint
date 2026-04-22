@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "@/components/ui/repo-form.module.css";
 import {
   DocumentDuplicateIcon,
@@ -13,23 +13,66 @@ type RepoFormProps = {
   sellerEmail: string;
 };
 
-type FeedbackState =
-  | {
-      type: "success" | "error";
-      message: string;
-    }
-  | null;
+type FeedbackState = {
+  type: "success" | "error";
+  message: string;
+} | null;
 
-export default function RepoForm({
-  sellerName,
-  sellerEmail,
-}: RepoFormProps) {
+function useLookupSuggestions(type: "client" | "company", value: string) {
+  const [items, setItems] = useState<string[]>([]);
+
+  useEffect(() => {
+    const query = value.trim();
+
+    if (query.length < 1) {
+      setItems([]);
+      return;
+    }
+
+    const controller = new AbortController();
+
+    const timeout = setTimeout(async () => {
+      try {
+        const response = await fetch(
+          `/api/lookups?type=${type}&q=${encodeURIComponent(query)}`,
+          {
+            signal: controller.signal,
+          },
+        );
+
+        if (!response.ok) {
+          setItems([]);
+          return;
+        }
+
+        const data = (await response.json()) as { items?: string[] };
+        setItems(data.items ?? []);
+      } catch {
+        setItems([]);
+      }
+    }, 250);
+
+    return () => {
+      controller.abort();
+      clearTimeout(timeout);
+    };
+  }, [type, value]);
+
+  return items;
+}
+
+export default function RepoForm({ sellerName, sellerEmail }: RepoFormProps) {
   const [files, setFiles] = useState<File[]>([]);
+  const [clientName, setClientName] = useState("");
+  const [companyName, setCompanyName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackState>(null);
 
   const formRef = useRef<HTMLFormElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const clientSuggestions = useLookupSuggestions("client", clientName);
+  const companySuggestions = useLookupSuggestions("company", companyName);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
@@ -38,7 +81,7 @@ export default function RepoForm({
 
     setFiles((prev) => {
       const existingKeys = new Set(
-        prev.map((file) => `${file.name}-${file.size}-${file.lastModified}`)
+        prev.map((file) => `${file.name}-${file.size}-${file.lastModified}`),
       );
 
       const uniqueNewFiles = newFiles.filter((file) => {
@@ -66,6 +109,9 @@ export default function RepoForm({
 
     const form = e.currentTarget;
     const formData = new FormData(form);
+
+    formData.set("clientName", clientName.trim());
+    formData.set("companyName", companyName.trim());
 
     files.forEach((file) => {
       formData.append("files", file);
@@ -95,6 +141,8 @@ export default function RepoForm({
 
       form.reset();
       setFiles([]);
+      setClientName("");
+      setCompanyName("");
 
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
@@ -152,10 +200,18 @@ export default function RepoForm({
               id="clientName"
               name="clientName"
               type="text"
+              list="client-suggestions"
               placeholder="Nombre del cliente"
               className={styles.input}
+              value={clientName}
+              onChange={(e) => setClientName(e.target.value)}
               required
             />
+            <datalist id="client-suggestions">
+              {clientSuggestions.map((item) => (
+                <option key={item} value={item} />
+              ))}
+            </datalist>
           </div>
 
           <div className={styles.field}>
@@ -164,10 +220,18 @@ export default function RepoForm({
               id="companyName"
               name="companyName"
               type="text"
+              list="company-suggestions"
               placeholder="Empresa asociada"
               className={styles.input}
+              value={companyName}
+              onChange={(e) => setCompanyName(e.target.value)}
               required
             />
+            <datalist id="company-suggestions">
+              {companySuggestions.map((item) => (
+                <option key={item} value={item} />
+              ))}
+            </datalist>
           </div>
         </div>
 
@@ -202,7 +266,10 @@ export default function RepoForm({
           {files.length > 0 && (
             <div className={styles.fileList}>
               {files.map((file, index) => (
-                <div key={`${file.name}-${file.lastModified}-${index}`} className={styles.fileItem}>
+                <div
+                  key={`${file.name}-${file.lastModified}-${index}`}
+                  className={styles.fileItem}
+                >
                   <div className={styles.fileInfo}>
                     <DocumentIcon className={styles.fileIcon} />
                     <span className={styles.fileName}>{file.name}</span>

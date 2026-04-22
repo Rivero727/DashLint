@@ -69,6 +69,22 @@ model SubmissionFile {
   @@map("submissions_files")
 }
 
+model Client {
+  clientId    Int      @id @default(autoincrement()) @map("client_id")
+  clientName  String   @unique @db.VarChar(100) @map("client_name")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("clients")
+}
+
+model Company {
+  companyId    Int      @id @default(autoincrement()) @map("company_id")
+  companyName  String   @unique @db.VarChar(100) @map("company_name")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@map("companies")
+}
+
 model Session {
   id        String   @id
   expiresAt DateTime

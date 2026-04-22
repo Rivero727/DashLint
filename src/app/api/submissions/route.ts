@@ -31,7 +31,7 @@ export async function POST(request: Request) {
   if (!session?.user) {
     return NextResponse.json(
       { message: "No autorizado. Inicia sesión para continuar." },
-      { status: 401 }
+      { status: 401 },
     );
   }
 
@@ -50,21 +50,21 @@ export async function POST(request: Request) {
   if (!submitName || !clientName || !companyName) {
     return NextResponse.json(
       { message: "Completa todos los campos obligatorios." },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
   if (files.length === 0) {
     return NextResponse.json(
       { message: "Debes subir al menos un archivo PDF." },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
   if (files.length > MAX_FILES) {
     return NextResponse.json(
       { message: `Solo puedes subir hasta ${MAX_FILES} archivos PDF.` },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -72,7 +72,7 @@ export async function POST(request: Request) {
     if (!isPdfFile(file)) {
       return NextResponse.json(
         { message: `El archivo "${file.name}" no es un PDF válido.` },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -81,7 +81,7 @@ export async function POST(request: Request) {
         {
           message: `El archivo "${file.name}" supera el límite de ${MAX_FILE_SIZE_MB} MB.`,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
   }
@@ -118,6 +118,18 @@ export async function POST(request: Request) {
     }
 
     const submission = await prisma.$transaction(async (tx) => {
+      await tx.client.upsert({
+        where: { clientName },
+        update: {},
+        create: { clientName },
+      });
+
+      await tx.company.upsert({
+        where: { companyName },
+        update: {},
+        create: { companyName },
+      });
+
       const createdSubmission = await tx.submission.create({
         data: {
           submitName,
@@ -145,7 +157,7 @@ export async function POST(request: Request) {
         message: "Repositorio creado correctamente.",
         submitId: submission.submitId,
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     await rm(absoluteFolder, { recursive: true, force: true });
@@ -154,7 +166,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json(
       { message: "No fue posible crear el repositorio." },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

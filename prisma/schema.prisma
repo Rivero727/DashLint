@@ -31,6 +31,7 @@ model User {
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
   accounts      Account[]
+  submissions   Submission[]
 
   roleId        Int?      @map("role_id")
   role          Role?     @relation(fields: [roleId], references: [roleId], onDelete: SetNull)
@@ -38,6 +39,34 @@ model User {
   @@unique([email])
   @@index([roleId])
   @@map("user")
+}
+
+model Submission {
+  submitId     Int              @id @default(autoincrement()) @map("submit_id")
+  submitName   String           @db.VarChar(150) @map("submit_name")
+  clientName   String           @db.VarChar(100) @map("client_name")
+  companyName  String           @db.VarChar(100) @map("company_name")
+  description  String?          @db.VarChar(255)
+  createdDate  DateTime         @default(now()) @map("created_date")
+  userId       String           @map("user_id")
+  user         User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  files        SubmissionFile[]
+
+  @@index([userId])
+  @@map("submissions")
+}
+
+model SubmissionFile {
+  fileId      Int        @id @default(autoincrement()) @map("file_id")
+  fileName    String     @db.VarChar(150) @map("file_name")
+  filePath    String     @db.VarChar(350) @map("file_path")
+  fileSize    Int?       @map("file_size")
+  uploadedAt  DateTime   @default(now()) @map("uploaded_at")
+  submitId    Int        @map("submit_id")
+  submission  Submission @relation(fields: [submitId], references: [submitId], onDelete: Cascade)
+
+  @@index([submitId])
+  @@map("submissions_files")
 }
 
 model Session {

@@ -197,3 +197,11 @@
   width: 18px;
   height: 18px;
 }
+
+.fieldFull {
+  width: 100%;
+}
+
+.actions {
+  width: 100%;
+}

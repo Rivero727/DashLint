@@ -14,9 +14,29 @@ export type RoleOption = {
   roleName: string;
 };
 
-export async function getUsersAndRoles() {
+export async function getUsersAndRoles(search?: string) {
+  const searchTerm = search?.trim();
+
   const [users, roles] = await Promise.all([
     prisma.user.findMany({
+      where: searchTerm
+        ? {
+            OR: [
+              {
+                name: {
+                  contains: searchTerm,
+                  mode: "insensitive",
+                },
+              },
+              {
+                email: {
+                  contains: searchTerm,
+                  mode: "insensitive",
+                },
+              },
+            ],
+          }
+        : undefined,
       include: {
         role: true,
         sessions: true,

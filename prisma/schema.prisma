@@ -48,6 +48,7 @@ model Submission {
   companyName  String           @db.VarChar(100) @map("company_name")
   description  String?          @db.VarChar(255)
   createdDate  DateTime         @default(now()) @map("created_date")
+  updatedAt    DateTime         @updatedAt @map("updated_at")
   userId       String           @map("user_id")
   user         User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   files        SubmissionFile[]

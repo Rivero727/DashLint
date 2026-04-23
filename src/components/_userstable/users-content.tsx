@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import SearchBar from "@/components/_searchbar/searchbar";
 import UsersTable from "@/components/_userstable/userstable";
 import styles from "@/components/ui/dashboard.module.css";
@@ -24,22 +24,67 @@ type Props = {
   roles: RoleOption[];
 };
 
+const ITEMS_PER_PAGE = 8;
+
 export default function UsersContent({ initialUsers, roles }: Props) {
+  const [users, setUsers] = useState<UserRow[]>(initialUsers);
   const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
 
   const filteredUsers = useMemo(() => {
     const term = search.trim().toLowerCase();
 
-    if (!term) return initialUsers;
+    if (!term) return users;
 
-    return initialUsers.filter((user) => {
+    return users.filter((user) => {
       return (
         user.name.toLowerCase().includes(term) ||
         user.role.toLowerCase().includes(term) ||
         user.email.toLowerCase().includes(term)
       );
     });
-  }, [initialUsers, search]);
+  }, [users, search]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredUsers.length / ITEMS_PER_PAGE));
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
+
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+
+  const paginatedUsers = filteredUsers.slice(
+    startIndex,
+    startIndex + ITEMS_PER_PAGE,
+  );
+
+  const handleUserDeleted = (userId: string) => {
+    setUsers((prev) => prev.filter((user) => user.id !== userId));
+  };
+
+  const handleUserRoleUpdated = (
+    userId: string,
+    roleId: number,
+    roleName: string,
+  ) => {
+    setUsers((prev) =>
+      prev.map((user) =>
+        user.id === userId
+          ? {
+              ...user,
+              roleId,
+              role: roleName,
+            }
+          : user,
+      ),
+    );
+  };
 
   return (
     <>
@@ -60,7 +105,17 @@ export default function UsersContent({ initialUsers, roles }: Props) {
 
       <div className={styles.spacer}>
         <div className={styles.fullWidth}>
-          <UsersTable initialUsers={filteredUsers} roles={roles} />
+          <UsersTable
+            users={paginatedUsers}
+            roles={roles}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={filteredUsers.length}
+            startIndex={startIndex}
+            onPageChange={setCurrentPage}
+            onUserDeleted={handleUserDeleted}
+            onUserRoleUpdated={handleUserRoleUpdated}
+          />
         </div>
       </div>
     </>

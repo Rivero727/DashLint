@@ -11,7 +11,7 @@
 .table {
   width: 100%;
   border-collapse: collapse;
-  text-align: center; 
+  text-align: center;
 }
 
 .table thead {
@@ -24,7 +24,7 @@
   padding: 14px 16px;
   border-right: 1.5px solid #d1d5db;
   font-size: 14px;
-  color: #111827
+  color: #111827;
 }
 
 .table th:last-child,
@@ -41,7 +41,7 @@
 }
 
 .table tbody tr {
-  border-bottom: 1.5px solid #d1d5db; 
+  border-bottom: 1.5px solid #d1d5db;
   transition: background-color 0.2s ease;
 }
 
@@ -70,7 +70,6 @@
   display: block;
   font-size: 12px;
   color: #6b7280;
-
 }
 
 .statusBadge {
@@ -81,8 +80,14 @@
   display: inline-block;
 }
 
-.active { background-color: #dcfce7; color: #166534; }
-.inactive { background-color: #f3f4f6; color: #4b5563; }
+.active {
+  background-color: #dcfce7;
+  color: #166534;
+}
+.inactive {
+  background-color: #f3f4f6;
+  color: #4b5563;
+}
 
 .actionsCell {
   display: flex;
@@ -143,12 +148,25 @@
   margin: 0 auto 16px;
 }
 
-.modalTitle { font-size: 18px; font-weight: 700; color: #111827; margin-bottom: 8px; }
-.modalText { font-size: 14px; color: #6b7280; margin-bottom: 24px; }
+.modalTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 8px;
+}
+.modalText {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 24px;
+}
 
-.modalActions { display: flex; gap: 12px; }
+.modalActions {
+  display: flex;
+  gap: 12px;
+}
 
-.btnCancel, .btnConfirm {
+.btnCancel,
+.btnConfirm {
   flex: 1;
   padding: 10px;
   border-radius: 8px;
@@ -157,8 +175,14 @@
   border: none;
 }
 
-.btnCancel { background: #f3f4f6; color: #374151; }
-.btnConfirm { background: #ef4444; color: white; }
+.btnCancel {
+  background: #f3f4f6;
+  color: #374151;
+}
+.btnConfirm {
+  background: #ef4444;
+  color: white;
+}
 
 .roleSelect {
   width: 100%;
@@ -198,4 +222,82 @@
 
 .btnConfirmRole:hover {
   background-color: #2eb827;
+}
+
+.emptyCell {
+  padding: 24px 16px;
+  font-weight: 500;
+  color: #6b7280;
+  text-align: center;
+}
+
+.tableFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px;
+  border-top: 1.5px solid #d1d5db;
+  background-color: #f9fafb;
+  flex-wrap: wrap;
+}
+
+.pageInfo {
+  font-size: 13px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pageBtn {
+  min-width: 38px;
+  height: 38px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1.5px solid #d1d5db;
+  background: #ffffff;
+  color: #374151;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pageBtn:hover:not(:disabled) {
+  border-color: #38d430;
+  color: #38d430;
+  background-color: #f0fdf4;
+}
+
+.pageBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pageBtnActive {
+  background-color: #38d430;
+  color: #ffffff;
+  border-color: #2eb827;
+}
+
+.pageBtnActive:hover {
+  background-color: #2eb827;
+  color: #ffffff;
+}
+
+@media (max-width: 768px) {
+  .tableFooter {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .pagination {
+    justify-content: center;
+  }
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useMemo, useState, useTransition } from "react";
 import styles from "@/components/ui/users-view.module.css";
 import {
   PencilSquareIcon,
@@ -25,23 +25,50 @@ type RoleOption = {
 };
 
 type Props = {
-  initialUsers: UserRow[];
+  users: UserRow[];
   roles: RoleOption[];
+  currentPage: number;
+  totalPages: number;
+  totalItems: number;
+  startIndex: number;
+  onPageChange: (page: number) => void;
+  onUserDeleted: (userId: string) => void;
+  onUserRoleUpdated: (userId: string, roleId: number, roleName: string) => void;
 };
 
-export default function UsersTable({ initialUsers, roles }: Props) {
-  const [users, setUsers] = useState<UserRow[]>(initialUsers);
+function getVisiblePages(currentPage: number, totalPages: number) {
+  const delta = 2;
+  const start = Math.max(1, currentPage - delta);
+  const end = Math.min(totalPages, currentPage + delta);
+
+  const pages: number[] = [];
+
+  for (let i = start; i <= end; i += 1) {
+    pages.push(i);
+  }
+
+  return pages;
+}
+
+export default function UsersTable({
+  users,
+  roles,
+  currentPage,
+  totalPages,
+  totalItems,
+  startIndex,
+  onPageChange,
+  onUserDeleted,
+  onUserRoleUpdated,
+}: Props) {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<UserRow | null>(null);
   const [selectedRoleId, setSelectedRoleId] = useState<number | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  useEffect(() => {
-    setUsers(initialUsers);
-  }, [initialUsers]);
-
   const sortedRoles = useMemo(() => roles, [roles]);
+  const visiblePages = getVisiblePages(currentPage, totalPages);
 
   const openDelete = (user: UserRow) => {
     setSelectedUser(user);
@@ -73,16 +100,10 @@ export default function UsersTable({ initialUsers, roles }: Props) {
 
       const updatedRole = roles.find((role) => role.roleId === selectedRoleId);
 
-      setUsers((prev) =>
-        prev.map((user) =>
-          user.id === selectedUser.id
-            ? {
-                ...user,
-                roleId: selectedRoleId,
-                role: updatedRole?.roleName ?? user.role,
-              }
-            : user,
-        ),
+      onUserRoleUpdated(
+        selectedUser.id,
+        selectedRoleId,
+        updatedRole?.roleName ?? selectedUser.role,
       );
 
       closeRoleModal();
@@ -94,9 +115,7 @@ export default function UsersTable({ initialUsers, roles }: Props) {
 
     startTransition(async () => {
       await deleteUser(selectedUser.id);
-
-      setUsers((prev) => prev.filter((user) => user.id !== selectedUser.id));
-
+      onUserDeleted(selectedUser.id);
       closeDeleteModal();
     });
   };
@@ -119,12 +138,14 @@ export default function UsersTable({ initialUsers, roles }: Props) {
           <tbody>
             {users.length === 0 ? (
               <tr>
-                <td colSpan={6}>No se encontraron usuarios para esta búsqueda.</td>
+                <td colSpan={6} className={styles.emptyCell}>
+                  No se encontraron usuarios para esta búsqueda.
+                </td>
               </tr>
             ) : (
               users.map((user, index) => (
                 <tr key={user.id}>
-                  <td className={styles.idCell}>#{index + 1}</td>
+                  <td className={styles.idCell}>#{startIndex + index + 1}</td>
                   <td>
                     <span className={styles.userName}>{user.name}</span>
                   </td>
@@ -165,6 +186,50 @@ export default function UsersTable({ initialUsers, roles }: Props) {
             )}
           </tbody>
         </table>
+
+        <div className={styles.tableFooter}>
+          <div className={styles.pageInfo}>
+            {totalItems === 0
+              ? "Sin resultados"
+              : `Mostrando ${startIndex + 1} - ${Math.min(
+                  startIndex + users.length,
+                  totalItems,
+                )} de ${totalItems}`}
+          </div>
+
+          <div className={styles.pagination}>
+            <button
+              type="button"
+              className={styles.pageBtn}
+              onClick={() => onPageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              Anterior
+            </button>
+
+            {visiblePages.map((page) => (
+              <button
+                key={page}
+                type="button"
+                className={`${styles.pageBtn} ${
+                  page === currentPage ? styles.pageBtnActive : ""
+                }`}
+                onClick={() => onPageChange(page)}
+              >
+                {page}
+              </button>
+            ))}
+
+            <button
+              type="button"
+              className={styles.pageBtn}
+              onClick={() => onPageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+            >
+              Siguiente
+            </button>
+          </div>
+        </div>
       </div>
 
       {showRoleModal && selectedUser && (

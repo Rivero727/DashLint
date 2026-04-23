@@ -1,0 +1,144 @@
+.wrapper {
+  width: 100%;
+  margin-top: 20px;
+  background: #ffffff;
+  border: 2px solid #d1d5db;
+  border-radius: 12px;
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.08),
+    0 4px 6px -2px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+  border-bottom: 1.5px solid #d1d5db;
+  background-color: #f9fafb;
+  flex-wrap: wrap;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #111827;
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 4px 0 0;
+}
+
+.clearBtn {
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 8px;
+  border: 1.5px solid #d1d5db;
+  background: #ffffff;
+  color: #374151;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clearBtn:hover {
+  border-color: #38d430;
+  color: #38d430;
+  background-color: #f0fdf4;
+}
+
+.tableWrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+}
+
+.table thead {
+  background-color: #38d430;
+}
+
+.table th,
+.table td {
+  padding: 14px 16px;
+  border-right: 1px solid #d1d5db;
+  border-bottom: 1px solid #d1d5db;
+  font-size: 14px;
+  color: #111827;
+}
+
+.table th:last-child,
+.table td:last-child {
+  border-right: none;
+}
+
+.table th {
+  font-weight: 700;
+  color: #ffffff;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+}
+
+.clickableRow {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.clickableRow:hover {
+  background-color: #f0fdf4;
+}
+
+.idCell {
+  font-family: monospace;
+  font-weight: 700;
+}
+
+.repoButton {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #111827;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.repoButton:hover {
+  color: #38d430;
+  text-decoration: underline;
+}
+
+.emptyCell {
+  padding: 24px 16px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .clearBtn {
+    width: 100%;
+  }
+
+  .table th,
+  .table td {
+    padding: 12px 10px;
+    font-size: 13px;
+  }
+}

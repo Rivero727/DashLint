@@ -103,7 +103,7 @@ export default function RepoTable({
             ) : (
               repositories.map((repo, index) => (
                 <tr key={repo.submitId}>
-                  <td className={styles.idCell}>#{startIndex + index + 1}</td>
+                  <td className={styles.idCell}>{repo.submitId}</td>
                   <td className={styles.vendorCell}>{repo.vendor}</td>
                   <td className={styles.nameCell}>
                     <Link

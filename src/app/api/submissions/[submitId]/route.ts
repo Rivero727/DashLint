@@ -249,17 +249,31 @@ export async function PUT(
       ),
     );
 
+    if (!updatedSubmission) {
+      return NextResponse.json(
+        { message: "No fue posible recuperar el repositorio actualizado." },
+        { status: 500 },
+      );
+    }
+
     return NextResponse.json(
       {
         message: "Repositorio actualizado correctamente.",
-        submitId,
-        files:
-          updatedSubmission?.files.map((file) => ({
+        repository: {
+          submitId: updatedSubmission.submitId,
+          submitName: updatedSubmission.submitName,
+          clientName: updatedSubmission.clientName,
+          companyName: updatedSubmission.companyName,
+          description: updatedSubmission.description ?? "",
+          createdAt: updatedSubmission.createdDate.toISOString(),
+          updatedAt: updatedSubmission.updatedAt.toISOString(),
+          files: updatedSubmission.files.map((file) => ({
             fileId: file.fileId,
             fileName: file.fileName,
             filePath: file.filePath,
             fileSize: file.fileSize,
-          })) ?? [],
+          })),
+        },
       },
       { status: 200 },
     );

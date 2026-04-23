@@ -145,7 +145,7 @@ export default function UsersTable({
             ) : (
               users.map((user, index) => (
                 <tr key={user.id}>
-                  <td className={styles.idCell}>#{startIndex + index + 1}</td>
+                  <td className={styles.idCell}>{startIndex + index + 1}</td>
                   <td>
                     <span className={styles.userName}>{user.name}</span>
                   </td>

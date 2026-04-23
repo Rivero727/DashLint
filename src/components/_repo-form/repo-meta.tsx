@@ -17,7 +17,7 @@ export default function RepoMeta({
     <div className={styles.metaContainer}>
       <div className={styles.metaCard}>
         <span className={styles.metaLabel}>ID del Repositorio</span>
-        <span className={styles.metaValue}>#{submitId}</span>
+        <span className={styles.metaValue}>{submitId}</span>
       </div>
 
       <div className={styles.metaCard}>

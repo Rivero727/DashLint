@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import styles from "@/components/ui/repo-form.module.css";
 import {
@@ -8,9 +9,25 @@ import {
   DocumentIcon,
 } from "@heroicons/react/24/outline";
 
+type ExistingRepoFile = {
+  fileId: number;
+  fileName: string;
+  filePath: string;
+  fileSize: number | null;
+};
+
 type RepoFormProps = {
   sellerName: string;
   sellerEmail: string;
+  mode?: "create" | "edit";
+  submitId?: number;
+  initialData?: {
+    submitName: string;
+    clientName: string;
+    companyName: string;
+    description: string;
+    existingFiles: ExistingRepoFile[];
+  };
 };
 
 type FeedbackState = {
@@ -61,10 +78,26 @@ function useLookupSuggestions(type: "client" | "company", value: string) {
   return items;
 }
 
-export default function RepoForm({ sellerName, sellerEmail }: RepoFormProps) {
+export default function RepoForm({
+  sellerName,
+  sellerEmail,
+  mode = "create",
+  submitId,
+  initialData,
+}: RepoFormProps) {
+  const [submitName, setSubmitName] = useState(initialData?.submitName ?? "");
+  const [clientName, setClientName] = useState(initialData?.clientName ?? "");
+  const [companyName, setCompanyName] = useState(
+    initialData?.companyName ?? "",
+  );
+  const [description, setDescription] = useState(
+    initialData?.description ?? "",
+  );
+  const [existingFiles, setExistingFiles] = useState<ExistingRepoFile[]>(
+    initialData?.existingFiles ?? [],
+  );
+  const [removedFileIds, setRemovedFileIds] = useState<number[]>([]);
   const [files, setFiles] = useState<File[]>([]);
-  const [clientName, setClientName] = useState("");
-  const [companyName, setCompanyName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackState>(null);
 
@@ -73,6 +106,16 @@ export default function RepoForm({ sellerName, sellerEmail }: RepoFormProps) {
 
   const clientSuggestions = useLookupSuggestions("client", clientName);
   const companySuggestions = useLookupSuggestions("company", companyName);
+
+  useEffect(() => {
+    setSubmitName(initialData?.submitName ?? "");
+    setClientName(initialData?.clientName ?? "");
+    setCompanyName(initialData?.companyName ?? "");
+    setDescription(initialData?.description ?? "");
+    setExistingFiles(initialData?.existingFiles ?? []);
+    setRemovedFileIds([]);
+    setFiles([]);
+  }, [initialData]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
@@ -95,8 +138,15 @@ export default function RepoForm({ sellerName, sellerEmail }: RepoFormProps) {
     e.target.value = "";
   };
 
-  const removeFile = (index: number) => {
+  const removeNewFile = (index: number) => {
     setFiles((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const removeExistingFile = (fileId: number) => {
+    setRemovedFileIds((prev) =>
+      prev.includes(fileId) ? prev : [...prev, fileId],
+    );
+    setExistingFiles((prev) => prev.filter((file) => file.fileId !== fileId));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -107,28 +157,67 @@ export default function RepoForm({ sellerName, sellerEmail }: RepoFormProps) {
     setFeedback(null);
     setIsSubmitting(true);
 
+    if (mode === "create" && files.length === 0) {
+      setFeedback({
+        type: "error",
+        message: "Debes subir al menos un archivo PDF.",
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (mode === "edit" && existingFiles.length === 0 && files.length === 0) {
+      setFeedback({
+        type: "error",
+        message: "El repositorio debe conservar al menos un archivo PDF.",
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
     const form = e.currentTarget;
     const formData = new FormData(form);
 
+    formData.set("submitName", submitName.trim());
     formData.set("clientName", clientName.trim());
     formData.set("companyName", companyName.trim());
+    formData.set("description", description.trim());
 
     files.forEach((file) => {
       formData.append("files", file);
     });
 
+    removedFileIds.forEach((fileId) => {
+      formData.append("removedFileIds", String(fileId));
+    });
+
+    const url =
+      mode === "edit" && submitId
+        ? `/api/submissions/${submitId}`
+        : "/api/submissions";
+
+    const method = mode === "edit" ? "PUT" : "POST";
+
     try {
-      const response = await fetch("/api/submissions", {
-        method: "POST",
+      const response = await fetch(url, {
+        method,
         body: formData,
       });
 
-      const data = (await response.json()) as { message?: string };
+      const data = (await response.json()) as {
+        message?: string;
+        submitId?: number;
+        files?: ExistingRepoFile[];
+      };
 
       if (!response.ok) {
         setFeedback({
           type: "error",
-          message: data.message || "No fue posible crear el repositorio.",
+          message:
+            data.message ||
+            (mode === "edit"
+              ? "No fue posible actualizar el repositorio."
+              : "No fue posible crear el repositorio."),
         });
         setIsSubmitting(false);
         return;
@@ -136,13 +225,29 @@ export default function RepoForm({ sellerName, sellerEmail }: RepoFormProps) {
 
       setFeedback({
         type: "success",
-        message: data.message || "Repositorio creado correctamente.",
+        message:
+          data.message ||
+          (mode === "edit"
+            ? "Repositorio actualizado correctamente."
+            : "Repositorio creado correctamente."),
       });
 
-      form.reset();
-      setFiles([]);
-      setClientName("");
-      setCompanyName("");
+      if (mode === "create") {
+        form.reset();
+        setSubmitName("");
+        setClientName("");
+        setCompanyName("");
+        setDescription("");
+        setFiles([]);
+        setExistingFiles([]);
+        setRemovedFileIds([]);
+      } else {
+        setFiles([]);
+        setRemovedFileIds([]);
+        if (Array.isArray(data.files)) {
+          setExistingFiles(data.files);
+        }
+      }
 
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
@@ -153,7 +258,9 @@ export default function RepoForm({ sellerName, sellerEmail }: RepoFormProps) {
       setFeedback({
         type: "error",
         message:
-          "Ocurrió un problema de conexión al intentar crear el repositorio.",
+          mode === "edit"
+            ? "Ocurrió un problema de conexión al intentar actualizar el repositorio."
+            : "Ocurrió un problema de conexión al intentar crear el repositorio.",
       });
     } finally {
       setIsSubmitting(false);
@@ -163,9 +270,13 @@ export default function RepoForm({ sellerName, sellerEmail }: RepoFormProps) {
   return (
     <div className={styles.formContainer}>
       <div className={styles.formHeader}>
-        <h2 className={styles.formTitle}>Nuevo Repositorio</h2>
+        <h2 className={styles.formTitle}>
+          {mode === "edit" ? "Editar Repositorio" : "Nuevo Repositorio"}
+        </h2>
         <p className={styles.formSubtitle}>
-          Llene los campos requeridos y suba la documentación.
+          {mode === "edit"
+            ? "Modifica los datos del repositorio y su documentación."
+            : "Llene los campos requeridos y suba la documentación."}
         </p>
       </div>
 
@@ -190,6 +301,8 @@ export default function RepoForm({ sellerName, sellerEmail }: RepoFormProps) {
               type="text"
               placeholder="Ej: coresa-infra-v1"
               className={styles.input}
+              value={submitName}
+              onChange={(e) => setSubmitName(e.target.value)}
               required
             />
           </div>
@@ -243,11 +356,52 @@ export default function RepoForm({ sellerName, sellerEmail }: RepoFormProps) {
             placeholder="Detalles adicionales..."
             className={styles.textarea}
             rows={4}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
           />
         </div>
 
+        {mode === "edit" && existingFiles.length > 0 && (
+          <div className={styles.fieldFull}>
+            <label>Documentación actual</label>
+            <div className={styles.fileList}>
+              {existingFiles.map((file) => (
+                <div key={file.fileId} className={styles.fileItem}>
+                  <div className={styles.fileInfo}>
+                    <DocumentIcon className={styles.fileIcon} />
+                    <Link
+                      href={file.filePath}
+                      target="_blank"
+                      className={styles.fileLink}
+                    >
+                      {file.fileName}
+                    </Link>
+                    <span className={styles.fileSize}>
+                      {file.fileSize
+                        ? `(${(file.fileSize / 1024 / 1024).toFixed(2)} MB)`
+                        : ""}
+                    </span>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => removeExistingFile(file.fileId)}
+                    className={styles.removeBtn}
+                  >
+                    <XMarkIcon className={styles.closeIcon} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className={styles.fieldFull}>
-          <label>Documentación (PDFs)</label>
+          <label>
+            {mode === "edit"
+              ? "Agregar más documentación (PDFs)"
+              : "Documentación (PDFs)"}
+          </label>
           <div className={styles.dropzone}>
             <DocumentDuplicateIcon className={styles.uploadIcon} />
             <p>
@@ -280,7 +434,7 @@ export default function RepoForm({ sellerName, sellerEmail }: RepoFormProps) {
 
                   <button
                     type="button"
-                    onClick={() => removeFile(index)}
+                    onClick={() => removeNewFile(index)}
                     className={styles.removeBtn}
                   >
                     <XMarkIcon className={styles.closeIcon} />
@@ -317,7 +471,13 @@ export default function RepoForm({ sellerName, sellerEmail }: RepoFormProps) {
             className={styles.submitBtn}
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Creando repositorio..." : "Crear Repositorio"}
+            {isSubmitting
+              ? mode === "edit"
+                ? "Guardando cambios..."
+                : "Creando repositorio..."
+              : mode === "edit"
+                ? "Guardar Cambios"
+                : "Crear Repositorio"}
           </button>
         </div>
       </form>

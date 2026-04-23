@@ -2,8 +2,7 @@ import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import RepoForm from "@/components/_repo-form/repo-form";
-import RepoMeta from "@/components/_repo-form/repo-meta";
+import RepositoryDetailContent from "@/components/_repo-form/repository-detail-content";
 import styles from "@/components/ui/dashboard.module.css";
 
 type PageProps = {
@@ -56,14 +55,6 @@ export default async function Page({ params }: PageProps) {
     redirect("/dashboard/repositories");
   }
 
-  const formatter = new Intl.DateTimeFormat("es-MX", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-
   return (
     <div className={styles.container}>
       <header className={styles.header}></header>
@@ -72,7 +63,7 @@ export default async function Page({ params }: PageProps) {
         <div className={styles.titleContainer}>
           <div>
             <h1 className={styles.pageTitle}>
-              Repositorio #{submission.submitId}
+              Repositorio {submission.submitId}
             </h1>
             <p className={styles.subtitle}>
               Visualiza y edita la información del repositorio.
@@ -80,23 +71,17 @@ export default async function Page({ params }: PageProps) {
           </div>
         </div>
 
-        <RepoMeta
-          submitId={submission.submitId}
-          createdAt={formatter.format(submission.createdDate)}
-          updatedAt={formatter.format(submission.updatedAt)}
-          fileCount={submission.files.length}
-        />
-
-        <RepoForm
-          mode="edit"
+        <RepositoryDetailContent
           submitId={submission.submitId}
           sellerName={submission.user.name}
           sellerEmail={submission.user.email}
-          initialData={{
+          initialRepository={{
             submitName: submission.submitName,
             clientName: submission.clientName,
             companyName: submission.companyName,
             description: submission.description ?? "",
+            createdAt: submission.createdDate.toISOString(),
+            updatedAt: submission.updatedAt.toISOString(),
             existingFiles: submission.files.map((file) => ({
               fileId: file.fileId,
               fileName: file.fileName,

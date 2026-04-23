@@ -28,6 +28,15 @@ type RepoFormProps = {
     description: string;
     existingFiles: ExistingRepoFile[];
   };
+  onRepositoryUpdated?: (data: {
+    submitName: string;
+    clientName: string;
+    companyName: string;
+    description: string;
+    createdAt: string;
+    updatedAt: string;
+    existingFiles: ExistingRepoFile[];
+  }) => void;
 };
 
 type FeedbackState = {
@@ -84,6 +93,7 @@ export default function RepoForm({
   mode = "create",
   submitId,
   initialData,
+  onRepositoryUpdated,
 }: RepoFormProps) {
   const [submitName, setSubmitName] = useState(initialData?.submitName ?? "");
   const [clientName, setClientName] = useState(initialData?.clientName ?? "");
@@ -206,8 +216,15 @@ export default function RepoForm({
 
       const data = (await response.json()) as {
         message?: string;
-        submitId?: number;
-        files?: ExistingRepoFile[];
+        repository?: {
+          submitName: string;
+          clientName: string;
+          companyName: string;
+          description: string;
+          createdAt: string;
+          updatedAt: string;
+          files: ExistingRepoFile[];
+        };
       };
 
       if (!response.ok) {
@@ -244,8 +261,23 @@ export default function RepoForm({
       } else {
         setFiles([]);
         setRemovedFileIds([]);
-        if (Array.isArray(data.files)) {
-          setExistingFiles(data.files);
+
+        if (data.repository) {
+          setSubmitName(data.repository.submitName);
+          setClientName(data.repository.clientName);
+          setCompanyName(data.repository.companyName);
+          setDescription(data.repository.description);
+          setExistingFiles(data.repository.files);
+
+          onRepositoryUpdated?.({
+            submitName: data.repository.submitName,
+            clientName: data.repository.clientName,
+            companyName: data.repository.companyName,
+            description: data.repository.description,
+            createdAt: data.repository.createdAt,
+            updatedAt: data.repository.updatedAt,
+            existingFiles: data.repository.files,
+          });
         }
       }
 

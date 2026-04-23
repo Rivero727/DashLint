@@ -9,6 +9,7 @@ import SummaryChart from "@/components/_summary-chart/summary-chart";
 import VendorRepos from "@/components/_vendor-repos/vendor-repos";
 import SearchBar from "@/components/_searchbar/searchbar";
 import DashboardHeader from "@/components/_action-button/action-button";
+import { generateDashboardPdfReport } from "@/lib/generate-dashboard-report";
 import {
   buildDashboardStats,
   submissionMatchesPeriod,
@@ -20,6 +21,8 @@ import {
 type Props = {
   users: DashboardUser[];
   submissions: DashboardSubmission[];
+  currentUserName: string;
+  currentUserEmail: string;
 };
 
 type SelectedPeriod = {
@@ -34,9 +37,25 @@ const INTERVALS: Array<{ value: DashboardInterval; label: string }> = [
   { value: "year", label: "Años" },
 ];
 
-export default function DashboardContent({ users, submissions }: Props) {
+function sanitizeFileName(value: string) {
+  return value
+    .normalize("NFKD")
+    .replace(/[^\w.\-]/g, "_")
+    .replace(/_+/g, "_")
+    .replace(/^_+|_+$/g, "");
+}
+
+export default function DashboardContent({
+  users,
+  submissions,
+  currentUserName,
+  currentUserEmail,
+}: Props) {
   const [search, setSearch] = useState("");
   const [interval, setInterval] = useState<DashboardInterval>("month");
+  const [isGeneratingReport, setIsGeneratingReport] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [reportWithCover, setReportWithCover] = useState(true);
 
   const [showAllDetails, setShowAllDetails] = useState(false);
   const [selectedVendor, setSelectedVendor] = useState<string | null>(null);
@@ -156,6 +175,50 @@ export default function DashboardContent({ users, submissions }: Props) {
     onlyCurrentMonth,
   ]);
 
+  const activeReportFilters = useMemo(() => {
+    const items: string[] = [];
+
+    if (search.trim()) {
+      items.push(`Búsqueda: ${search.trim()}`);
+    }
+
+    items.push(
+      `Intervalo: ${
+        INTERVALS.find((item) => item.value === interval)?.label ?? interval
+      }`,
+    );
+
+    if (selectedVendor) {
+      items.push(`Vendedor: ${selectedVendor}`);
+    }
+
+    if (selectedClient) {
+      items.push(`Cliente: ${selectedClient}`);
+    }
+
+    if (selectedPeriod) {
+      items.push(`Período: ${selectedPeriod.label}`);
+    }
+
+    if (onlyCurrentMonth) {
+      items.push("Filtro: Este mes");
+    }
+
+    if (showAllDetails) {
+      items.push("Vista detalle: Todos los repositorios");
+    }
+
+    return items;
+  }, [
+    search,
+    interval,
+    selectedVendor,
+    selectedClient,
+    selectedPeriod,
+    onlyCurrentMonth,
+    showAllDetails,
+  ]);
+
   function clearDetailFilters() {
     setShowAllDetails(false);
     setSelectedVendor(null);
@@ -205,6 +268,85 @@ export default function DashboardContent({ users, submissions }: Props) {
     );
   }
 
+  function openReportModal() {
+    if (isGeneratingReport) return;
+    setShowReportModal(true);
+  }
+
+  function closeReportModal() {
+    if (isGeneratingReport) return;
+    setShowReportModal(false);
+  }
+
+  async function handleCreateReport() {
+    if (isGeneratingReport) return;
+
+    try {
+      setIsGeneratingReport(true);
+
+      const now = new Date();
+      const datePart = new Intl.DateTimeFormat("sv-SE", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      }).format(now);
+
+      const intervalLabel =
+        INTERVALS.find((item) => item.value === interval)?.label.toLowerCase() ??
+        interval;
+
+      const fileNameParts = ["reporte_dashboard", intervalLabel];
+
+      if (selectedVendor) {
+        fileNameParts.push(`vendor_${selectedVendor}`);
+      }
+
+      if (selectedClient) {
+        fileNameParts.push(`cliente_${selectedClient}`);
+      }
+
+      if (selectedPeriod?.label) {
+        fileNameParts.push(`periodo_${selectedPeriod.label}`);
+      }
+
+      if (onlyCurrentMonth) {
+        fileNameParts.push("este_mes");
+      }
+
+      fileNameParts.push(reportWithCover ? "con_portada" : "sin_portada");
+      fileNameParts.push(datePart);
+
+      const fileName = sanitizeFileName(`${fileNameParts.join("_")}.pdf`);
+
+      const reportSubmissions = hasActiveDetailFilters
+        ? detailSubmissions
+        : filteredSubmissions;
+
+      const reportTitle = hasActiveDetailFilters
+        ? detailTitle
+        : "Resumen general del dashboard";
+
+      await generateDashboardPdfReport({
+        fileName,
+        title: reportTitle,
+        interval,
+        activeFilters: activeReportFilters,
+        submissions: reportSubmissions,
+        generatedAt: now,
+        generatedByName: currentUserName,
+        generatedByEmail: currentUserEmail,
+        showCoverPage: reportWithCover,
+      });
+
+      setShowReportModal(false);
+    } catch (error) {
+      console.error("No fue posible generar el reporte del dashboard:", error);
+      alert("No fue posible generar el reporte PDF del dashboard.");
+    } finally {
+      setIsGeneratingReport(false);
+    }
+  }
+
   return (
     <>
       <div className={styles.titleContainer}>
@@ -217,7 +359,10 @@ export default function DashboardContent({ users, submissions }: Props) {
         </div>
 
         <div className={styles.actions}>
-          <DashboardHeader />
+          <DashboardHeader
+            onCreate={openReportModal}
+            isGenerating={isGeneratingReport}
+          />
           <SearchBar
             placeholder="Buscar en el dashboard..."
             value={search}
@@ -282,6 +427,68 @@ export default function DashboardContent({ users, submissions }: Props) {
           />
         )}
       </div>
+
+      {showReportModal && (
+        <div className={styles.reportModalOverlay}>
+          <div className={styles.reportModal}>
+            <h3 className={styles.reportModalTitle}>Generar reporte PDF</h3>
+            <p className={styles.reportModalText}>
+              Selecciona si deseas incluir una portada ejecutiva en el reporte.
+              El contenido se generará usando los filtros activos del dashboard.
+            </p>
+
+            <div className={styles.reportOptions}>
+              <button
+                type="button"
+                className={`${styles.reportOptionCard} ${
+                  reportWithCover ? styles.reportOptionCardActive : ""
+                }`}
+                onClick={() => setReportWithCover(true)}
+              >
+                <span className={styles.reportOptionTitle}>Con portada</span>
+                <span className={styles.reportOptionDescription}>
+                  Incluye una portada ejecutiva con información del reporte,
+                  filtros activos y datos del usuario que lo genera.
+                </span>
+              </button>
+
+              <button
+                type="button"
+                className={`${styles.reportOptionCard} ${
+                  !reportWithCover ? styles.reportOptionCardActive : ""
+                }`}
+                onClick={() => setReportWithCover(false)}
+              >
+                <span className={styles.reportOptionTitle}>Sin portada</span>
+                <span className={styles.reportOptionDescription}>
+                  Genera directamente el contenido ejecutivo del reporte sin una
+                  hoja inicial.
+                </span>
+              </button>
+            </div>
+
+            <div className={styles.reportModalActions}>
+              <button
+                type="button"
+                className={styles.reportModalCancel}
+                onClick={closeReportModal}
+                disabled={isGeneratingReport}
+              >
+                Cancelar
+              </button>
+
+              <button
+                type="button"
+                className={styles.reportModalConfirm}
+                onClick={handleCreateReport}
+                disabled={isGeneratingReport}
+              >
+                {isGeneratingReport ? "Generando..." : "Generar PDF"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

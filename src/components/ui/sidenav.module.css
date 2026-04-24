@@ -3,34 +3,62 @@
   height: 100%;
   flex-direction: column;
   padding: 16px 12px;
-  
-  /*background-color: rgba(56, 212, 48, 0.85);
-  backdrop-filter: blur(12px); 
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);*/
-
 }
 
 .logoLink {
   margin-bottom: 8px;
   display: flex;
-  height: 80px;
-  align-items: flex-end;
-  justify-content: flex-start;
-  border-radius: 7px;
-  background-color: rgba(0, 15, 159, 0.85);
-  backdrop-filter: blur(12px); 
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 16px;
+  height: 96px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background-color: transparent;
+  border: 1.5px solid #d1d5db;
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.08),
+    0 4px 6px -2px rgba(0, 0, 0, 0.04);
+  padding: 8px;
   margin-top: -12px;
+  text-decoration: none;
+  overflow: hidden;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.logoLink:hover {
+  border-color: #38d430;
+  background-color: #f9fafb;
+  box-shadow:
+    0 12px 20px -6px rgba(56, 212, 48, 0.18),
+    0 6px 10px -4px rgba(0, 0, 0, 0.06);
+  transform: translateY(-1px);
 }
 
 .logoContainer {
-  width: 128px;
-  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.logoImageWrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  max-width: 90px;
+  max-height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logoImage {
+  object-fit: contain;
+  object-position: center;
 }
 
 .navContent {
@@ -47,7 +75,6 @@
   width: 100%;
   flex-grow: 1;
   border-radius: 7px;
-  background-color: #f9fafb;
 }
 
 .signOutButton {
@@ -58,46 +85,139 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  border-radius: 7px;
-  background-color: #f9fafb;
-  
-  /*background-color: rgba(56, 212, 48, 0.85);
-  backdrop-filter: blur(12px); 
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);*/
-
+  border-radius: 10px;
+  background-color: transparent;
+  border: 1.5px solid #d1d5db;
   padding: 12px;
   font-size: 15px;
-  font-weight: 500;
-  border: none;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s, color 0.2s;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
 }
 
-.signOutButton:hover {
-  background-color: #e0f2fe;
-  color: #000f9f;
+.signOutButton:hover:not(:disabled) {
+  background-color: #fff1f2;
+  border-color: #ef4444;
+  color: #ef4444;
+  transform: translateY(-1px);
+}
+
+.signOutButton:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
 }
 
 .buttonText {
   display: none;
-  color: #000000;
+  color: #111827;
 }
 
 .icon {
   width: 24px;
   height: 24px;
   color: #000f9f;
-  transition: transform 0.2s;
+  transition: transform 0.2s ease, color 0.2s ease;
 }
 
-.icon:hover {
-  transform: scale(1.2);
-  color: #38D430;
+.signOutButton:hover:not(:disabled) .icon {
+  color: #ef4444;
+  transform: scale(1.08);
 }
 
-/* Media Query para pantallas medianas (md: 768px) */
+/* MODAL */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(17, 24, 39, 0.45);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 120;
+  padding: 16px;
+}
+
+.modal {
+  width: 100%;
+  max-width: 420px;
+  background: #ffffff;
+  border: 2px solid #d1d5db;
+  border-radius: 14px;
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.15),
+    0 10px 10px -5px rgba(0, 0, 0, 0.08);
+  padding: 24px;
+  text-align: center;
+}
+
+.modalIcon {
+  width: 48px;
+  height: 48px;
+  color: #ef4444;
+  margin: 0 auto 16px;
+}
+
+.modalTitle {
+  font-size: 20px;
+  font-weight: 800;
+  color: #111827;
+  margin: 0 0 8px;
+}
+
+.modalText {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #6b7280;
+  margin: 0 0 20px;
+}
+
+.modalActions {
+  display: flex;
+  gap: 12px;
+}
+
+.btnCancel,
+.btnConfirm {
+  flex: 1;
+  min-height: 42px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btnCancel {
+  border: 2px solid #d1d5db;
+  background: #ffffff;
+  color: #374151;
+}
+
+.btnCancel:hover:not(:disabled) {
+  border-color: #9ca3af;
+  background: #f9fafb;
+}
+
+.btnConfirm {
+  border: 2px solid #dc2626;
+  background: #ef4444;
+  color: #ffffff;
+}
+
+.btnConfirm:hover:not(:disabled) {
+  background: #dc2626;
+}
+
+.btnCancel:disabled,
+.btnConfirm:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 @media (min-width: 768px) {
   .container {
     padding-left: 8px;
@@ -105,12 +225,13 @@
   }
 
   .logoLink {
-    height: 160px;
+    height: 180px;
+    padding: 10px;
   }
 
-  .logoContainer {
-    width: 160px;
-    
+  .logoImageWrapper {
+    max-width: 140px;
+    max-height: 140px;
   }
 
   .navContent {
@@ -125,11 +246,16 @@
   .signOutButton {
     flex: none;
     justify-content: flex-start;
-    padding: 8px 12px;
+    padding: 10px 12px;
   }
 
   .buttonText {
     display: block;
-    color: #000000;
+  }
+}
+
+@media (max-width: 640px) {
+  .modalActions {
+    flex-direction: column;
   }
 }

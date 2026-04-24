@@ -3,7 +3,6 @@
 import {
   UserGroupIcon,
   HomeIcon,
-  DocumentDuplicateIcon,
   TableCellsIcon,
   ClipboardDocumentCheckIcon,
 } from "@heroicons/react/24/outline";
@@ -13,14 +12,14 @@ import clsx from "clsx";
 import styles from "@/components/ui/nav-links.module.css";
 
 const links = [
-  { name: "Home", href: "/dashboard", icon: HomeIcon },
+  { name: "Inicio", href: "/dashboard", icon: HomeIcon },
   {
     name: "Repositorios",
     href: "/dashboard/repositories",
     icon: TableCellsIcon,
   },
   {
-    name: "Crear Repositorio",
+    name: "Crear repositorio",
     href: "/dashboard/forms",
     icon: ClipboardDocumentCheckIcon,
   },
@@ -34,6 +33,7 @@ export default function NavLinks() {
     <>
       {links.map((link) => {
         const LinkIcon = link.icon;
+
         return (
           <Link
             key={link.name}

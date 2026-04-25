@@ -52,15 +52,15 @@ export default function SideNav() {
         <Link
           className={Styles.logoLink}
           href="/dashboard"
-          aria-label="Ir al inicio"
+          aria-label="Ir al dashboard"
         >
           <div className={Styles.logoContainer}>
             <div className={Styles.logoImageWrapper}>
               <Image
                 src="/logocoresa.svg"
-                alt="Logo DashLint"
+                alt="Logo CORESA IT"
                 fill
-                sizes="(min-width: 768px) 220px, 120px"
+                sizes="(min-width: 768px) 210px, 150px"
                 className={Styles.logoImage}
                 priority
               />

@@ -6,35 +6,44 @@
 }
 
 .logoLink {
-  margin-bottom: 8px;
+  position: relative;
+  margin-bottom: 22px;
   display: flex;
   height: 96px;
   align-items: center;
   justify-content: center;
-  border-radius: 12px;
   background-color: transparent;
-  border: 1.5px solid #d1d5db;
-  box-shadow:
-    0 10px 15px -3px rgba(0, 0, 0, 0.08),
-    0 4px 6px -2px rgba(0, 0, 0, 0.04);
-  padding: 8px;
+  border: none;
+  box-shadow: none;
+  padding: 4px 0;
   margin-top: -12px;
   text-decoration: none;
-  overflow: hidden;
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease,
-    transform 0.2s ease,
-    background-color 0.2s ease;
+  overflow: visible;
+}
+
+.logoLink::after {
+  content: "";
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  bottom: -10px;
+  height: 1px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(0, 15, 159, 0.22) 25%,
+    rgba(56, 212, 48, 0.35) 50%,
+    rgba(0, 15, 159, 0.22) 75%,
+    transparent 100%
+  );
 }
 
 .logoLink:hover {
-  border-color: #38d430;
-  background-color: #f9fafb;
-  box-shadow:
-    0 12px 20px -6px rgba(56, 212, 48, 0.18),
-    0 6px 10px -4px rgba(0, 0, 0, 0.06);
-  transform: translateY(-1px);
+  background-color: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  transform: none;
 }
 
 .logoContainer {
@@ -48,17 +57,18 @@
 .logoImageWrapper {
   position: relative;
   width: 100%;
-  height: 100%;
-  max-width: 90px;
-  max-height: 90px;
+  max-width: 170px;
+  height: 68px;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: visible;
 }
 
 .logoImage {
   object-fit: contain;
   object-position: center;
+  padding: 0;
 }
 
 .navContent {
@@ -225,13 +235,20 @@
   }
 
   .logoLink {
-    height: 180px;
-    padding: 10px;
+    height: 150px;
+    padding: 8px 0;
+    margin-bottom: 26px;
+  }
+
+  .logoLink::after {
+    left: 10%;
+    right: 10%;
+    bottom: -13px;
   }
 
   .logoImageWrapper {
-    max-width: 140px;
-    max-height: 140px;
+    max-width: 210px;
+    height: 100px;
   }
 
   .navContent {

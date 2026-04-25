@@ -57,7 +57,7 @@ export default function SideNav() {
           <div className={Styles.logoContainer}>
             <div className={Styles.logoImageWrapper}>
               <Image
-                src="/CORESAIT-Logo.png"
+                src="/logocoresa.svg"
                 alt="Logo DashLint"
                 fill
                 sizes="(min-width: 768px) 220px, 120px"

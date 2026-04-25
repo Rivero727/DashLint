@@ -7,14 +7,12 @@ import styles from "@/components/ui/auth.module.css";
 import {
   EyeIcon,
   EyeSlashIcon,
-  CheckCircleIcon,
   ExclamationTriangleIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 
 type ModalState =
   | {
-      type: "error" | "success";
       title: string;
       message: string;
     }
@@ -34,22 +32,15 @@ export default function LoginForm() {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const redirectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const modalTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     return () => {
-      if (redirectTimeoutRef.current) clearTimeout(redirectTimeoutRef.current);
       if (modalTimeoutRef.current) clearTimeout(modalTimeoutRef.current);
     };
   }, []);
 
   function clearTimers() {
-    if (redirectTimeoutRef.current) {
-      clearTimeout(redirectTimeoutRef.current);
-      redirectTimeoutRef.current = null;
-    }
-
     if (modalTimeoutRef.current) {
       clearTimeout(modalTimeoutRef.current);
       modalTimeoutRef.current = null;
@@ -63,7 +54,6 @@ export default function LoginForm() {
     clearTimers();
 
     setModal({
-      type: "error",
       title,
       message,
     });
@@ -71,21 +61,6 @@ export default function LoginForm() {
     modalTimeoutRef.current = setTimeout(() => {
       setModal(null);
     }, 3000);
-  }
-
-  function showSuccessModalAndRedirect() {
-    clearTimers();
-
-    setModal({
-      type: "success",
-      title: "Inicio de sesión exitoso",
-      message:
-        "Tus credenciales fueron verificadas correctamente. Serás redirigido al dashboard en 2 segundos.",
-    });
-
-    redirectTimeoutRef.current = setTimeout(() => {
-      router.push("/dashboard");
-    }, 2000);
   }
 
   function getFriendlyLoginError(error: AuthClientErrorLike): {
@@ -240,7 +215,9 @@ export default function LoginForm() {
     }
 
     setIsSubmitting(false);
-    showSuccessModalAndRedirect();
+
+    router.replace("/dashboard");
+    router.refresh();
   }
 
   return (
@@ -289,6 +266,7 @@ export default function LoginForm() {
                   autoComplete="current-password"
                   className={styles.input}
                 />
+
                 <button
                   type="button"
                   className={styles.showPasswordBtn}
@@ -375,23 +353,13 @@ export default function LoginForm() {
             aria-modal="true"
             aria-labelledby="login-modal-title"
           >
-            {modal.type === "error" ? (
-              <ExclamationTriangleIcon className={styles.modalIconError} />
-            ) : (
-              <CheckCircleIcon className={styles.modalIconSuccess} />
-            )}
+            <ExclamationTriangleIcon className={styles.modalIconError} />
 
             <h3 id="login-modal-title" className={styles.modalTitle}>
               {modal.title}
             </h3>
 
             <p className={styles.modalText}>{modal.message}</p>
-
-            {modal.type === "success" && (
-              <p className={styles.modalHint}>
-                Redirigiendo al dashboard...
-              </p>
-            )}
           </div>
         </div>
       )}

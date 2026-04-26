@@ -1,20 +1,17 @@
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 import styles from "@/components/ui/dashboard.module.css";
 import DashboardContent from "@/components/_dashboard/dashboard-content";
-import { auth } from "@/lib/auth";
 import { getDashboardData } from "./data";
+import { getCurrentUserWithRole, isAdminRole } from "@/lib/permissions";
 
 export default async function Page() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
+  const currentUser = await getCurrentUserWithRole();
+
+  const isAdmin = isAdminRole(currentUser.role?.roleName);
+
+  const { users, submissions } = await getDashboardData({
+    userId: currentUser.id,
+    isAdmin,
   });
-
-  if (!session?.user) {
-    redirect("/login");
-  }
-
-  const { users, submissions } = await getDashboardData();
 
   return (
     <div className={styles.container}>
@@ -24,8 +21,8 @@ export default async function Page() {
         <DashboardContent
           users={users}
           submissions={submissions}
-          currentUserName={session.user.name ?? "Usuario no identificado"}
-          currentUserEmail={session.user.email ?? "correo-no-disponible"}
+          currentUserName={currentUser.name ?? "Usuario no identificado"}
+          currentUserEmail={currentUser.email ?? "correo-no-disponible"}
         />
       </main>
     </div>

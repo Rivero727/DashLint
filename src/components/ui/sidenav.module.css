@@ -71,6 +71,104 @@
   padding: 0;
 }
 
+.userSessionCard {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  border-radius: 12px;
+  border: 1.5px solid #d1d5db;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.92) 0%,
+      rgba(249, 250, 251, 0.96) 100%
+    );
+  box-shadow:
+    0 8px 14px -10px rgba(0, 0, 0, 0.18),
+    0 4px 8px -8px rgba(0, 15, 159, 0.2);
+}
+
+.userAvatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: #f0fdf4;
+  border: 1.5px solid #bbf7d0;
+}
+
+.userAvatarIcon {
+  width: 24px;
+  height: 24px;
+  color: #38d430;
+}
+
+.userSessionInfo {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 2px;
+}
+
+.userSessionLabel {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #6b7280;
+}
+
+.userSessionName {
+  font-size: 13px;
+  font-weight: 800;
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.userSessionEmail {
+  font-size: 11px;
+  font-weight: 500;
+  color: #6b7280;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.userRoleBadge {
+  width: fit-content;
+  margin-top: 4px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #eef2ff;
+  border: 1px solid #c7d2fe;
+  color: #000f9f;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.navDivider {
+  width: 100%;
+  height: 1px;
+  margin: 2px 0 10px;
+  background:
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      #d1d5db 18%,
+      #d1d5db 82%,
+      transparent 100%
+    );
+}
+
 .navContent {
   display: flex;
   flex-grow: 1;
@@ -251,6 +349,112 @@
     height: 100px;
   }
 
+  .userSessionCard {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  border-radius: 12px;
+  border: 1.5px solid #d1d5db;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.92) 0%,
+      rgba(249, 250, 251, 0.96) 100%
+    );
+  box-shadow:
+    0 8px 14px -10px rgba(0, 0, 0, 0.18),
+    0 4px 8px -8px rgba(0, 15, 159, 0.2);
+}
+
+.userAvatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: #f0fdf4;
+  border: 1.5px solid #bbf7d0;
+}
+
+.userAvatarIcon {
+  width: 24px;
+  height: 24px;
+  color: #38d430;
+}
+
+.userSessionInfo {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 2px;
+}
+
+.userSessionLabel {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #6b7280;
+}
+
+.userSessionName {
+  font-size: 13px;
+  font-weight: 800;
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.userSessionEmail {
+  font-size: 11px;
+  font-weight: 500;
+  color: #6b7280;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.userRoleBadge {
+  width: fit-content;
+  margin-top: 4px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #eef2ff;
+  border: 1px solid #c7d2fe;
+  color: #000f9f;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.userSessionCard {
+  margin-bottom: 12px;
+}
+
+.navDivider {
+  margin-bottom: 12px;
+}
+
+.navDivider {
+  width: 100%;
+  height: 1px;
+  margin: 2px 0 10px;
+  background:
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      #d1d5db 18%,
+      #d1d5db 82%,
+      transparent 100%
+    );
+}
+
   .navContent {
     flex-direction: column;
     gap: 8px;
@@ -275,4 +479,30 @@
   .modalActions {
     flex-direction: column;
   }
+
+  .userSessionCard {
+  padding: 8px;
+  gap: 8px;
+}
+
+.userAvatar {
+  width: 34px;
+  height: 34px;
+}
+
+.userAvatarIcon {
+  width: 22px;
+  height: 22px;
+}
+
+.userSessionEmail,
+.userSessionLabel,
+.userRoleBadge {
+  display: none;
+}
+
+.userSessionName {
+  font-size: 12px;
+  max-width: 110px;
+}
 }

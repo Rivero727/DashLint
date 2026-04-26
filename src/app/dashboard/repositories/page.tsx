@@ -1,9 +1,15 @@
 import styles from "@/components/ui/dashboard.module.css";
 import RepoContent from "@/components/_repo-table/repo-content";
 import { getRepositories } from "./data";
+import { getCurrentUserWithRole, isAdminRole } from "@/lib/permissions";
 
 export default async function Page() {
-  const repositories = await getRepositories();
+  const currentUser = await getCurrentUserWithRole();
+
+  const repositories = await getRepositories({
+    userId: currentUser.id,
+    isAdmin: isAdminRole(currentUser.role?.roleName),
+  });
 
   return (
     <div className={styles.container}>

@@ -70,7 +70,8 @@ type GenerateDashboardPdfReportParams = {
  * leftLogoUrl: "/branding/logo-coresa.png"
  * rightLogoUrl: "/branding/logo-cliente.png"
  *
- * Si aún no tienes los logos, déjalos en null.
+ * Recomendación:
+ * Usa PNG o JPG para evitar problemas de renderizado en jsPDF.
  */
 const DEFAULT_BRANDING: ReportBranding = {
   companyName: "CORESA IT",
@@ -81,17 +82,6 @@ const DEFAULT_BRANDING: ReportBranding = {
     "Documento generado a partir de los filtros activos del dashboard",
   footerText: "CORESA IT · Reporte del Dashboard",
 
-  /**
-   * COLORES PERSONALIZABLES
-   *
-   * primaryColor: color principal para títulos/encabezados
-   * accentColor: color de acento corporativo
-   * darkColor: color de texto fuerte
-   * mutedColor: color de texto secundario
-   * lightBorderColor: bordes suaves
-   * lightBackgroundColor: fondos suaves de cajas y tablas
-   * whiteColor: blanco
-   */
   primaryColor: [17, 24, 39],
   accentColor: [56, 212, 48],
   darkColor: [17, 24, 39],
@@ -100,15 +90,11 @@ const DEFAULT_BRANDING: ReportBranding = {
   lightBackgroundColor: [249, 250, 251],
   whiteColor: [255, 255, 255],
 
-  /**
-   * PORTADA POR DEFECTO
-   * Esto se puede sobrescribir desde el modal del dashboard.
-   */
   showCoverPage: true,
 
   /**
    * RUTAS DE LOGOS
-   * Reemplázalas por tus logos reales cuando los tengas listos.
+   * Cambia estas rutas según tus archivos reales dentro de /public.
    */
   leftLogoUrl: "/dashlint-logo.png",
   rightLogoUrl: "/CORESAIT-Logo.png",
@@ -204,6 +190,7 @@ function drawStatCard(
 
 function getLastAutoTableFinalY(pdf: PdfDocument, fallback: number) {
   const typedPdf = pdf as PdfWithAutoTable;
+
   return typedPdf.lastAutoTable?.finalY
     ? typedPdf.lastAutoTable.finalY + 10
     : fallback;
@@ -247,45 +234,115 @@ async function loadImageAsDataUrl(imageUrl: string | null) {
   }
 }
 
+function getImageFormatFromDataUrl(dataUrl: string) {
+  if (dataUrl.startsWith("data:image/jpeg")) return "JPEG";
+  if (dataUrl.startsWith("data:image/jpg")) return "JPEG";
+  return "PNG";
+}
+
+function drawContainedImage(
+  pdf: PdfDocument,
+  imageDataUrl: string,
+  boxX: number,
+  boxY: number,
+  boxWidth: number,
+  boxHeight: number,
+) {
+  /**
+   * Esta función evita que los logos se deformen.
+   * Los coloca dentro de una caja máxima, manteniendo proporción.
+   */
+  const imageProperties = pdf.getImageProperties(imageDataUrl) as {
+    width: number;
+    height: number;
+    fileType?: string;
+  };
+
+  const ratio = Math.min(
+    boxWidth / imageProperties.width,
+    boxHeight / imageProperties.height,
+  );
+
+  const imageWidth = imageProperties.width * ratio;
+  const imageHeight = imageProperties.height * ratio;
+
+  const imageX = boxX + (boxWidth - imageWidth) / 2;
+  const imageY = boxY + (boxHeight - imageHeight) / 2;
+
+  const imageFormat =
+    imageProperties.fileType === "JPEG" || imageProperties.fileType === "PNG"
+      ? imageProperties.fileType
+      : getImageFormatFromDataUrl(imageDataUrl);
+
+  pdf.addImage(
+    imageDataUrl,
+    imageFormat,
+    imageX,
+    imageY,
+    imageWidth,
+    imageHeight,
+  );
+}
+
 function drawHeaderLogos(
   pdf: PdfDocument,
   branding: ReportBranding,
   leftLogoDataUrl: string | null,
   rightLogoDataUrl: string | null,
   pageWidth: number,
+  options?: {
+    top?: number;
+    boxWidth?: number;
+    boxHeight?: number;
+  },
 ) {
   /**
    * PERSONALIZA EL TAMAÑO DE LOS LOGOS AQUÍ
-   * Si tus logos tienen otra proporción, ajusta width/height.
+   *
+   * top: posición vertical.
+   * boxWidth: ancho máximo disponible para cada logo.
+   * boxHeight: alto máximo disponible para cada logo.
+   *
+   * La imagen se ajusta proporcionalmente dentro de esa caja.
    */
-  const logoWidth = 24;
-  const logoHeight = 24;
-  const logoTop = 8;
+  const margin = 12;
+  const logoTop = options?.top ?? 9;
+  const logoBoxWidth = options?.boxWidth ?? 52;
+  const logoBoxHeight = options?.boxHeight ?? 20;
 
   if (leftLogoDataUrl) {
-    pdf.addImage(leftLogoDataUrl, "PNG", 12, logoTop, logoWidth, logoHeight);
+    drawContainedImage(
+      pdf,
+      leftLogoDataUrl,
+      margin,
+      logoTop,
+      logoBoxWidth,
+      logoBoxHeight,
+    );
   }
 
   if (rightLogoDataUrl) {
-    pdf.addImage(
+    drawContainedImage(
+      pdf,
       rightLogoDataUrl,
-      "PNG",
-      pageWidth - 12 - logoWidth,
+      pageWidth - margin - logoBoxWidth,
       logoTop,
-      logoWidth,
-      logoHeight,
+      logoBoxWidth,
+      logoBoxHeight,
     );
   }
 
   /**
-   * Si aún no tienes logos, se mostrará el nombre de la empresa
-   * como respaldo en la parte superior derecha.
+   * Si no cargan los logos, se muestra el nombre de la empresa
+   * como respaldo visual.
    */
   if (!leftLogoDataUrl && !rightLogoDataUrl) {
     pdf.setFont("helvetica", "bold");
     pdf.setFontSize(11);
     pdf.setTextColor(...branding.darkColor);
-    pdf.text(branding.companyName, pageWidth - 12, 14, { align: "right" });
+    pdf.text(branding.companyName, pageWidth - margin, logoTop + 8, {
+      align: "right",
+    });
   }
 }
 
@@ -315,6 +372,7 @@ function drawInfoBox(
   pdf.setTextColor(...branding.mutedColor);
 
   let currentY = y + 15;
+
   for (const line of lines) {
     pdf.text(line, x + 4, currentY);
     currentY += lineHeight;
@@ -330,34 +388,57 @@ function drawPageHeader(
   leftLogoDataUrl: string | null,
   rightLogoDataUrl: string | null,
 ) {
+  const margin = 12;
+
   /**
    * BANDA SUPERIOR DELGADA
-   * No se usa fondo oscuro en la página, solo una línea/banda elegante.
+   * No se usa fondo azul en el cuerpo del documento.
    */
   pdf.setFillColor(...branding.accentColor);
   pdf.rect(0, 0, pageWidth, 5, "F");
 
+  /**
+   * ZONA EXCLUSIVA PARA LOGOS
+   * Los logos quedan arriba y no chocan con el texto.
+   */
   drawHeaderLogos(
     pdf,
     branding,
     leftLogoDataUrl,
     rightLogoDataUrl,
     pageWidth,
+    {
+      top: 9,
+      boxWidth: 52,
+      boxHeight: 20,
+    },
   );
 
+  /**
+   * TEXTO DEL HEADER
+   * Empieza más abajo para no cruzarse con los logos.
+   */
+  const titleY = 40;
+  const subtitleY = 46;
+  const lineY = 54;
+
   pdf.setFont("helvetica", "bold");
-  pdf.setFontSize(20);
+  pdf.setFontSize(18);
   pdf.setTextColor(...branding.darkColor);
-  pdf.text(title, 12, 18);
+  pdf.text(title, margin, titleY);
 
   pdf.setFont("helvetica", "normal");
   pdf.setFontSize(10);
   pdf.setTextColor(...branding.mutedColor);
-  pdf.text(subtitle, 12, 24);
+
+  const subtitleLines = pdf.splitTextToSize(subtitle, pageWidth - margin * 2);
+  pdf.text(subtitleLines, margin, subtitleY);
 
   pdf.setDrawColor(...branding.lightBorderColor);
   pdf.setLineWidth(0.8);
-  pdf.line(12, 30, pageWidth - 12, 30);
+  pdf.line(margin, lineY, pageWidth - margin, lineY);
+
+  return lineY;
 }
 
 function drawCoverPage(
@@ -381,36 +462,46 @@ function drawCoverPage(
   pdf.setFillColor(...branding.accentColor);
   pdf.rect(0, 0, pageWidth, 7, "F");
 
+  /**
+   * LOGOS DE PORTADA
+   * Más grandes que en el header de páginas interiores.
+   */
   drawHeaderLogos(
     pdf,
     branding,
     leftLogoDataUrl,
     rightLogoDataUrl,
     pageWidth,
+    {
+      top: 14,
+      boxWidth: 58,
+      boxHeight: 24,
+    },
   );
 
   pdf.setFont("helvetica", "bold");
   pdf.setFontSize(28);
   pdf.setTextColor(...branding.darkColor);
-  pdf.text(branding.coverTitle, margin, 55);
+  pdf.text(branding.coverTitle, margin, 62);
 
   pdf.setFont("helvetica", "normal");
   pdf.setFontSize(12);
   pdf.setTextColor(...branding.mutedColor);
+
   const subtitleLines = pdf.splitTextToSize(
     branding.coverSubtitle,
     pageWidth - margin * 2,
   );
-  pdf.text(subtitleLines, margin, 66);
+  pdf.text(subtitleLines, margin, 74);
 
   pdf.setDrawColor(...branding.accentColor);
   pdf.setLineWidth(1.2);
-  pdf.line(margin, 82, pageWidth - margin, 82);
+  pdf.line(margin, 90, pageWidth - margin, 90);
 
   drawInfoBox(
     pdf,
     margin,
-    95,
+    102,
     pageWidth - margin * 2,
     "Información del reporte",
     [
@@ -434,7 +525,7 @@ function drawCoverPage(
   drawInfoBox(
     pdf,
     margin,
-    150,
+    158,
     pageWidth - margin * 2,
     "Filtros activos",
     Array.isArray(filtersText) ? filtersText : [filtersText],
@@ -512,7 +603,7 @@ export async function generateDashboardPdfReport({
     pdf.addPage();
   }
 
-  drawPageHeader(
+  const headerBottomY = drawPageHeader(
     pdf,
     mergedBranding,
     pageWidth,
@@ -522,7 +613,7 @@ export async function generateDashboardPdfReport({
     rightLogoDataUrl,
   );
 
-  let currentY = 42;
+  let currentY = headerBottomY + 12;
 
   pdf.setFont("helvetica", "bold");
   pdf.setFontSize(15);
@@ -571,10 +662,12 @@ export async function generateDashboardPdfReport({
       activeFilters.join("  |  "),
       contentWidth,
     );
+
     pdf.setFont("helvetica", "normal");
     pdf.setFontSize(10);
     pdf.setTextColor(55, 65, 81);
     pdf.text(filterLines, margin, currentY);
+
     currentY += filterLines.length * 5 + 4;
   }
 
@@ -696,11 +789,6 @@ export async function generateDashboardPdfReport({
       lineWidth: 0.2,
     },
     headStyles: {
-      /**
-       * AQUÍ QUITAMOS EL AZUL:
-       * Ahora esta tabla usa el color principal institucional.
-       * Si deseas otro color, cámbialo aquí.
-       */
       fillColor: mergedBranding.primaryColor,
       textColor: mergedBranding.whiteColor,
       fontStyle: "bold",

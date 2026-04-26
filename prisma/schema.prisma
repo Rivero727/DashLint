@@ -23,6 +23,7 @@ model Role {
 
 model User {
   id            String    @id
+  userNumber Int @unique @default(autoincrement()) @map("user_number")
   name          String
   email         String
   emailVerified Boolean   @default(false)

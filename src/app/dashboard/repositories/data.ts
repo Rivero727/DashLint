@@ -9,8 +9,21 @@ export type RepositoryRow = {
   createdAt: string;
 };
 
-export async function getRepositories() {
+type GetRepositoriesParams = {
+  userId: string;
+  isAdmin: boolean;
+};
+
+export async function getRepositories({
+  userId,
+  isAdmin,
+}: GetRepositoriesParams) {
   const submissions = await prisma.submission.findMany({
+    where: isAdmin
+      ? undefined
+      : {
+          userId,
+        },
     include: {
       user: {
         select: {

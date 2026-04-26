@@ -9,10 +9,21 @@ import Styles from "@/components/ui/sidenav.module.css";
 import {
   PowerIcon,
   ExclamationTriangleIcon,
+  UserCircleIcon,
 } from "@heroicons/react/24/outline";
 import { signOut } from "@/lib/auth-client";
 
-export default function SideNav() {
+type SideNavProps = {
+  roleName: string | null;
+  currentUserName: string;
+  currentUserEmail: string;
+};
+
+export default function SideNav({
+  roleName,
+  currentUserName,
+  currentUserEmail,
+}: SideNavProps) {
   const router = useRouter();
   const [isSigningOut, setIsSigningOut] = useState(false);
   const [showSignOutModal, setShowSignOutModal] = useState(false);
@@ -69,8 +80,31 @@ export default function SideNav() {
         </Link>
 
         <div className={Styles.navContent}>
-          <NavLinks />
+          <NavLinks roleName={roleName} />
           <div className={Styles.spacer}></div>
+
+          <div className={Styles.navDivider}></div>
+
+          <div
+            className={Styles.userSessionCard}
+            title={`${currentUserName} · ${currentUserEmail}`}
+          >
+            <div className={Styles.userAvatar}>
+              <UserCircleIcon className={Styles.userAvatarIcon} />
+            </div>
+
+            <div className={Styles.userSessionInfo}>
+              <span className={Styles.userSessionLabel}>Sesión activa</span>
+              <span className={Styles.userSessionName}>{currentUserName}</span>
+              <span className={Styles.userSessionEmail}>
+                {currentUserEmail}
+              </span>
+
+              {roleName && (
+                <span className={Styles.userRoleBadge}>{roleName}</span>
+              )}
+            </div>
+          </div>
 
           <button
             type="button"

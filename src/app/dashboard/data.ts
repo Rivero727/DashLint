@@ -15,18 +15,38 @@ export type DashboardSubmission = {
   vendorName: string;
 };
 
-export async function getDashboardData() {
+type GetDashboardDataParams = {
+  userId: string;
+  isAdmin: boolean;
+};
+
+export async function getDashboardData({
+  userId,
+  isAdmin,
+}: GetDashboardDataParams) {
   const [users, submissions] = await Promise.all([
     prisma.user.findMany({
+      where: isAdmin
+        ? undefined
+        : {
+            id: userId,
+          },
       orderBy: {
         name: "asc",
       },
       select: {
         id: true,
         name: true,
+        email: true,
       },
     }),
+
     prisma.submission.findMany({
+      where: isAdmin
+        ? undefined
+        : {
+            userId,
+          },
       include: {
         user: {
           select: {
@@ -44,7 +64,7 @@ export async function getDashboardData() {
 
   const mappedUsers: DashboardUser[] = users.map((user) => ({
     id: user.id,
-    name: user.name,
+    name: user.name || user.email,
   }));
 
   const mappedSubmissions: DashboardSubmission[] = submissions.map(

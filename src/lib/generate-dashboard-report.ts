@@ -74,12 +74,12 @@ type GenerateDashboardPdfReportParams = {
  */
 const DEFAULT_BRANDING: ReportBranding = {
   companyName: "CORESA IT",
-  reportTitle: "Reporte Ejecutivo del Dashboard",
+  reportTitle: "Reporte del Dashboard",
   reportSubtitle: "Resumen de actividad y comportamiento de repositorios",
   coverTitle: "Reporte Ejecutivo",
   coverSubtitle:
     "Documento generado a partir de los filtros activos del dashboard",
-  footerText: "CORESA IT · Reporte Ejecutivo del Dashboard",
+  footerText: "CORESA IT · Reporte del Dashboard",
 
   /**
    * COLORES PERSONALIZABLES
@@ -110,8 +110,8 @@ const DEFAULT_BRANDING: ReportBranding = {
    * RUTAS DE LOGOS
    * Reemplázalas por tus logos reales cuando los tengas listos.
    */
-  leftLogoUrl: null,
-  rightLogoUrl: null,
+  leftLogoUrl: "/dashlint-logo.png",
+  rightLogoUrl: "/CORESAIT-Logo.png",
 };
 
 function formatDate(value: string) {

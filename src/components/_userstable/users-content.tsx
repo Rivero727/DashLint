@@ -7,6 +7,7 @@ import styles from "@/components/ui/dashboard.module.css";
 
 type UserRow = {
   id: string;
+  userNumber: number;
   name: string;
   email: string;
   role: string;
@@ -26,10 +27,20 @@ type Props = {
 
 const ITEMS_PER_PAGE = 8;
 
+function sortUsersByNumber(users: UserRow[]) {
+  return [...users].sort((a, b) => a.userNumber - b.userNumber);
+}
+
 export default function UsersContent({ initialUsers, roles }: Props) {
-  const [users, setUsers] = useState<UserRow[]>(initialUsers);
+  const [users, setUsers] = useState<UserRow[]>(() =>
+    sortUsersByNumber(initialUsers),
+  );
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+
+  useEffect(() => {
+    setUsers(sortUsersByNumber(initialUsers));
+  }, [initialUsers]);
 
   const filteredUsers = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -38,6 +49,7 @@ export default function UsersContent({ initialUsers, roles }: Props) {
 
     return users.filter((user) => {
       return (
+        String(user.userNumber).includes(term) ||
         user.name.toLowerCase().includes(term) ||
         user.role.toLowerCase().includes(term) ||
         user.email.toLowerCase().includes(term)
@@ -49,7 +61,10 @@ export default function UsersContent({ initialUsers, roles }: Props) {
     setCurrentPage(1);
   }, [search]);
 
-  const totalPages = Math.max(1, Math.ceil(filteredUsers.length / ITEMS_PER_PAGE));
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredUsers.length / ITEMS_PER_PAGE),
+  );
 
   useEffect(() => {
     if (currentPage > totalPages) {
@@ -65,7 +80,9 @@ export default function UsersContent({ initialUsers, roles }: Props) {
   );
 
   const handleUserDeleted = (userId: string) => {
-    setUsers((prev) => prev.filter((user) => user.id !== userId));
+    setUsers((prev) =>
+      sortUsersByNumber(prev.filter((user) => user.id !== userId)),
+    );
   };
 
   const handleUserRoleUpdated = (
@@ -74,14 +91,16 @@ export default function UsersContent({ initialUsers, roles }: Props) {
     roleName: string,
   ) => {
     setUsers((prev) =>
-      prev.map((user) =>
-        user.id === userId
-          ? {
-              ...user,
-              roleId,
-              role: roleName,
-            }
-          : user,
+      sortUsersByNumber(
+        prev.map((user) =>
+          user.id === userId
+            ? {
+                ...user,
+                roleId,
+                role: roleName,
+              }
+            : user,
+        ),
       ),
     );
   };
@@ -97,7 +116,7 @@ export default function UsersContent({ initialUsers, roles }: Props) {
         </div>
 
         <SearchBar
-          placeholder="Buscar por nombre, rol o correo..."
+          placeholder="Buscar por ID, nombre, rol o correo..."
           value={search}
           onChange={setSearch}
         />

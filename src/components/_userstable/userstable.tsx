@@ -12,6 +12,7 @@ import { deleteUser, updateUserRole } from "@/app/dashboard/users/actions";
 
 type UserRow = {
   id: string;
+  userNumber: number;
   name: string;
   email: string;
   role: string;
@@ -143,9 +144,9 @@ export default function UsersTable({
                 </td>
               </tr>
             ) : (
-              users.map((user, index) => (
+              users.map((user) => (
                 <tr key={user.id}>
-                  <td className={styles.idCell}>{startIndex + index + 1}</td>
+                  <td className={styles.idCell}>{user.userNumber}</td>
                   <td>
                     <span className={styles.userName}>{user.name}</span>
                   </td>
@@ -191,7 +192,7 @@ export default function UsersTable({
           <div className={styles.pageInfo}>
             {totalItems === 0
               ? "Sin resultados"
-              : `Mostrando ${startIndex + 1} - ${Math.min(
+              : `Mostrando usuarios ${startIndex + 1} - ${Math.min(
                   startIndex + users.length,
                   totalItems,
                 )} de ${totalItems}`}

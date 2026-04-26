@@ -83,7 +83,7 @@ export default function RepoTable({
         <table className={styles.table}>
           <thead>
             <tr>
-              <th className={styles.idCell}>ID</th>
+              <th className={styles.idCell}>Lead</th>
               <th>Vendedor</th>
               <th>Repositorio</th>
               <th>Cliente</th>
@@ -101,7 +101,7 @@ export default function RepoTable({
                 </td>
               </tr>
             ) : (
-              repositories.map((repo, index) => (
+              repositories.map((repo) => (
                 <tr key={repo.submitId}>
                   <td className={styles.idCell}>{repo.submitId}</td>
                   <td className={styles.vendorCell}>{repo.vendor}</td>

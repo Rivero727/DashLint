@@ -25,7 +25,7 @@ export async function getRepositories() {
       },
     },
     orderBy: {
-      createdDate: "desc",
+      submitId: "asc",
     },
   });
 
